@@ -71,10 +71,11 @@ $ ->
 
   $top = ($ '#tophead')
   $fix = ($ '#fixhead')
-  top = $top.offset().top - 50
-  ($ window).on 'scroll resize', (event) ->
-    if top < window.scrollY
-      $fix.css { display: 'table-cell', width: $top.width() }
-    else
-      $fix.css { display: 'none' }
+  if $top.size()
+    top = $top.offset().top - 50
+    ($ window).on 'scroll resize', (event) ->
+      if top < window.scrollY
+        $fix.css { display: 'table-cell', width: $top.width() }
+      else
+        $fix.css { display: 'none' }
 
