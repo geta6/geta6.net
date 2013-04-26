@@ -1,3 +1,5 @@
+mime = require 'mime'
+
 module.exports =
 
   inspect: (uri) ->
@@ -6,6 +8,7 @@ module.exports =
       path: uri
       name: _.last uri.split '/'
       real: uri.replace '/media/var', ''
+      type: mime.lookup uri
     if fs.existsSync uri
       stat = _.extend (fs.statSync uri), ext, live: yes
     else

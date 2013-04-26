@@ -16,7 +16,7 @@ mongoose.connect 'mongodb://localhost/media'
 app = express()
 app.disable 'x-powered-by'
 app.set 'util', require path.resolve 'config', 'helper'
-app.set 'port', process.env.PORT || 3050
+app.set 'port', process.env.PORT || 3030
 app.set 'views', path.resolve 'views'
 app.set 'view engine', 'jade'
 app.use express.favicon path.resolve 'public', 'favicon.ico'
@@ -35,6 +35,7 @@ app.use express.session
   cookie: maxAge: Date.now() + 60*60*24*7
 app.use passport.initialize()
 app.use passport.session()
+app.use require 'connect-stream'
 app.use app.router
 app.use (require path.resolve 'config', 'routes') app
 app.use express.errorHandler()
@@ -63,10 +64,10 @@ passport.use new Strategy (username, password, done) ->
     #   if username is 'geta6'
 
 # server
-# cluster = require 'cluster'
-# if cluster.isMaster
-#   cluster.fork() for i in [0...(require 'os').cpus().length]
-#   cluster.on 'exit', cluster.fork
-# else
-(require 'http').createServer(app).listen (app.get 'port'), ->
-  console.log "HTTPServer pid:#{process.pid} port:#{app.get 'port'}"
+cluster = require 'cluster'
+if cluster.isMaster
+  cluster.fork() for i in [0...(require 'os').cpus().length]
+  cluster.on 'exit', cluster.fork
+else
+  (require 'http').createServer(app).listen (app.get 'port'), ->
+    console.log "HTTPServer pid:#{process.pid} port:#{app.get 'port'}"

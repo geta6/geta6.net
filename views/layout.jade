@@ -12,7 +12,7 @@ html
       #head
         .container
           a#logo.each.pull-left(href='/')
-          a#play.each playing
+          a#play.each
           if req.isAuthenticated()
             a#user.each.pull-right(href='/user')
 
@@ -35,30 +35,45 @@ html
         .container
           .exterior
             .interior
-              #fixhead
-                .data.head
-                  .orderby-name.each.name name
-                  .orderby-star.each.star
-                  .orderby-logs.each.logs
-                  .orderby-date.each.date
-              #tophead
-                .data.head
-                  .orderby-name.each.name name
-                  .orderby-star.each.star
-                  .orderby-logs.each.logs
-                  .orderby-date.each.date
-              .data.body
-                .each.form: input#search(type='text', placeholder='Find files under current directory')
-              #mainfield
-                if stat.file
+              if stat.file
+                #fixhead
+                  .data.head
+                    .orderby-name.each.name name
+                    .orderby-star.each.star
+                    .orderby-logs.each.logs
+                    .orderby-date.each.date
+                #tophead
+                  .data.head
+                    .orderby-name.each.name name
+                    .orderby-star.each.star
+                    .orderby-logs.each.logs
+                    .orderby-date.each.date
+                .data.body
+                  .each.form: input#search(type='text', placeholder='will develop', disabled='disabled')
+                  //- Find files under current directory
+                #mainfield
                   for file in stat.file
                     a.data.body(href=file.real)
                       .each.name= file.name
-                      .each.star 3
-                      .each.logs 2
+                      .each.star -
+                      .each.logs -
                       .each.date(data-date=moment(file.mtime).format('X'))= moment(file.mtime).fromNow()
+              else
+                if stat.type.match(/video/)
+                  .data.body
+                    .each: video(src='#{stat.real}?live', controls='controls', autoplay)
+                else if stat.type.match(/audio/)
+                  .data.body
+                    .each: audio(src='#{stat.real}?live', controls='controls', autoplay)
+                else
+                  a.data.body(href='#{stat.real}?live')
+                    .each.form: input(type='button', value='Download "#{stat.name}"')
+                - console.log(stat)
               .data.foot
-                .each.name total 1 file, 186 MB
+                if stat.file
+                  .each.name total - file, - MB
+                else
+                  .each.name #{stat.type}, #{parseInt(stat.size/1024/1024)} MB, #{moment(stat.mtime).fromNow()}
 
     block foot
       #foot

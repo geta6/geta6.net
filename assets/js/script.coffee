@@ -46,7 +46,7 @@ $ ->
 #           ($ '#content').html data.responseText
 #   , 100
 
-  sortby = '+name'
+  sortby = '-date'
 
   ($ '.orderby-name').on 'click', ->
     sortby = if sortby is '+name' then '-name' else '+name'
