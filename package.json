@@ -1,0 +1,25 @@
+{
+  "name": "geta6.net",
+  "version": "0.4.2",
+  "private": true,
+  "scripts": {
+    "start": "node web.js"
+  },
+  "dependencies": {
+    "express": "*",
+    "mongoose": "*",
+    "passport": "*",
+    "passport-local": "*",
+    "coffee-script": "*",
+    "underscore": "*",
+    "underscore.string": "*",
+    "connect-redis": "*",
+    "connect-assets": "*",
+    "moment": "*",
+    "mime": "*",
+    "st": "*",
+    "nib": "*",
+    "jade": "*",
+    "stylus": "*"
+  }
+}

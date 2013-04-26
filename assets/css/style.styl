@@ -1,0 +1,349 @@
+@import 'nib'
+
+global-reset()
+
+// master
+
+*
+  box-sizing border-box
+
+body
+  padding 75px 0 25px 0
+  font 11px Helvetica, Arial, Sans-Serif
+  color #333333
+
+// common
+
+.container
+  position relative
+  margin 0 auto
+  padding 0 10px
+  max-width 660px
+
+.rise
+  color #333333
+  border-color #CACACA
+  background linear-gradient(top, #FAFAFA, #EAEAEA)
+
+.info
+  color #264C72
+  border-color #5F9FC6
+  background linear-gradient(top, #D7EAF7, #D0E3EF)
+
+.warn
+  color #A50200
+  border-color #DA9797
+  background linear-gradient(top, #F8D8D8, #EFD0D0)
+
+
+.data
+  display table
+  table-layout fixed
+  // display block
+  width 100%
+  min-height 36px
+  line-height 36px
+  border-color #E5E5E5 !important
+  border-bottom-width 1px
+  border-bottom-style solid
+  background-color #FFFFFF
+  &:hover
+    background-color #FFFFEE
+  &:last-child
+    border-bottom-width 0
+
+  .each
+    display table-cell
+    min-height 36px
+    padding 0 10px
+    overflow ellipsis
+    vertical-align top
+    text-align center
+
+    &.form
+      width 100%
+      padding-top 10px
+      padding-bottom 10px
+
+    &.name
+      width 60%
+      font-weight bold
+      text-align left
+
+    &.date
+      width 20%
+      font-size 10px
+
+.head
+  border-bottom-width 1px !important
+
+.head, .foot
+  font-weight bold
+  background linear-gradient(top, #FAFAFA, #EAEAEA)
+  text-shadow #FFFFFF 0px 1px 0px
+  @extend .rise
+
+  .each
+    position relative
+    border-left 1px solid #FAFAFA
+    border-right 1px solid #EAEAEA
+    &:first-child
+      border-left none
+    &:last-child
+      border-right none
+    &:after
+        content ' '
+        display block
+        position absolute
+        top 0
+        left 0
+        right 0
+        bottom 0
+        background-repeat no-repeat
+        background-position center center
+        background-size 20px 20px
+    &.star
+      &:after
+        background-image url('/img/icon-star-fill.png')
+    &.tags
+      background-image url('/img/icon-tags.png')
+    &.logs
+      &:after
+        background-image url('/img/icon-logs.png')
+    &.date
+      &:after
+        background-image url('/img/icon-date.png')
+
+.exterior
+  margin-bottom 25px
+  padding 3px
+  background #EFEFEF
+  border-radius 3px
+
+.interior
+  background #FFFFFF
+  border 1px solid #D8D8D8
+
+.flash
+  margin-bottom 25px
+  padding 0 15px
+  height 49px
+  font-weight bold
+  line-height 48px
+  text-shadow #FFFFFF 0px 1px 0px
+  border-radius 3px
+  border-width 1px
+  border-style solid
+
+.pull-left
+  float left
+
+.pull-right
+  float right
+
+.button
+  @extend .rise
+  display inline-block
+  border-width 1px
+  border-style solid
+  border-radius 3px
+  padding 5px
+  line-height 20px
+
+// tag
+
+a
+  color inherit
+  text-decoration none
+
+input
+  display block
+  appearance none
+  border 1px solid #CCCCCC
+  border-radius 3px
+  font-size inherit
+  font-family inherit
+  color inherit
+  outline none
+  padding 0 10px
+  &[type=text], &[type=password]
+    width 100%
+    height 36px
+  &[type=button], &[type=submit]
+    cursor pointer
+    min-height 30px
+    font-weight bold
+    color #333333
+    border 1px solid #CACACA
+    background linear-gradient(top, #FAFAFA, #EAEAEA)
+    &:hover
+      border-color #CCCCCC
+      background linear-gradient(top, #EAEAEA, #DADADA)
+
+  &:focus
+    border 1px solid #51A7E8
+
+// identified
+
+#load
+  z-index 11
+  position fixed
+  top 50%
+  left 50%
+  display none
+  width w = 100px
+  height h = 90px
+  margin-top -(w/2)px
+  margin-left -(h/2)px
+  background-size w h
+  border-radius 5px
+  opacity .84
+  .load
+    width w
+    height h
+    line-height h
+    background-color rgba(0,0,0,.48)
+    font-weight bold
+    color white
+    font-size 14px
+    text-align center
+    border-radius 5px
+
+#head
+  z-index 10
+  position fixed
+  top 0
+  left 0
+  right 0
+  height 50px
+  line-height 50px
+  border-bottom-width 1px
+  border-bottom-style solid
+  box-shadow 0 1px 0 rgba(255,255,255,0.4), 0 0px 10px rgba(0,0,0,0.1)
+  @extend .rise
+
+  .each
+    display inline-block
+    min-width 50px
+    height 50px
+    vertical-align top
+
+  #logo
+    background-image url('/img/logo.png')
+    background-repeat no-repeat
+    background-position center center
+    background-size 28px 28px
+
+  #play
+    position absolute
+    top 0
+    left 60px
+    right 60px
+    bottom 0
+
+  #user
+    font-weight bold
+    background-image url('/img/icon-user.png')
+    background-repeat no-repeat
+    background-position center center
+    background-size 32px 32px
+
+
+#navi
+  margin-bottom 25px
+
+  .data
+    display table
+    table-layout fixed
+    padding 0
+    width 100%
+    border-radius 3px
+    border-width 1px
+    border-style solid
+    @extend .rise
+
+    .each
+      display table-cell
+      text-align center
+      color #777777
+      border-bottom 2px solid #DADADA
+      height 36px
+      line-height 36px
+      &:first-child
+        border-radius 0 0 0 3px
+      &:last-child
+        border-radius 0 0 3px 0
+      &:hover
+        &:not(.selected)
+          color #4183C4
+          background-image linear-gradient(top, #FAFBFD, #DAE4EE)
+          background-size 100% 100%
+          border-bottom 2px solid #CFDCE8
+
+      &.selected
+        color #000000
+        border-bottom 2px solid #D26911
+
+#body
+  #fixhead
+    z-index 9
+    position fixed
+    top 50px
+    display none
+
+  #tophead
+    z-index 8
+    position relative
+
+  .data.head
+    .each
+      &:hover
+        &:not(.selected)
+          color #4183C4
+          background-image linear-gradient(top, #FAFBFD, #DAE4EE)
+          background-size 100% 100%
+          cursor pointer
+      &.selected
+        color #000000
+        border-bottom 2px solid #D26911
+
+#foot
+  border-top 1px solid #EEEEEE
+
+  .container
+    padding 0 10px
+    height 72px
+    line-height 72px
+    font-size 12px
+    color #777777
+
+    .pull-left
+      margin-right 1em
+
+    a
+      color #3A7FC6
+      &:hover
+        text-decoration underline
+
+#auth
+  position fixed
+  top 0
+  left 0
+  right 0
+  bottom 0
+  background-color #F7F9FA
+  background-image url('/img/back.png')
+  background-position center center
+  .container
+    margin 75px auto 0 auto
+    width 300px
+    .data.body
+      border none
+      &:hover
+        background inherit
+      input[type=submit]
+        display inline-block
+        margin 3px 5px
+      h1
+        font-weight bold
+        padding-left 10px

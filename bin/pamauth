@@ -1,0 +1,12 @@
+#!/usr/bin/env php
+<?php
+
+$user = $argv[1];
+$pass = $argv[2];
+
+if (pam_auth($user, $pass, &$error)) {
+  echo $user;
+} else {
+  echo $error;
+}
+

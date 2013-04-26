@@ -1,0 +1,9 @@
+*~
+.DS_Store
+.AppleDouble
+.AppleDB
+.AppleDesktop
+
+node_modules
+public/css
+public/js

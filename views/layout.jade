@@ -1,0 +1,75 @@
+!!! 5
+html
+  head
+    meta(charset='utf-8')
+    meta(name='viewport', content='width=device-width, initial-scale=1, user-scalable=no')
+    !=css('style')
+  body
+    #load
+      .load loading...
+
+    block head
+      #head
+        .container
+          a#logo.each.pull-left(href='/')
+          a#play.each playing
+          if req.isAuthenticated()
+            a#user.each.pull-right(href='/user')
+
+    block navi
+      #navi
+        .container
+          .data.head
+            a.each(href='/Apps') Apps
+            a.each(href='/Books') Books
+            a.each(href='/Games') Games
+            a.each(href='/Movies') Movies
+            a.each(href='/Music') Music
+
+    block body
+      #body
+        unless stat.live
+          .container
+            .flash.warn File Not Exists :(
+
+        .container
+          .exterior
+            .interior
+              #fixhead
+                .data.head
+                  .orderby-name.each.name name
+                  .orderby-star.each.star
+                  .orderby-logs.each.logs
+                  .orderby-date.each.date
+              #tophead
+                .data.head
+                  .orderby-name.each.name name
+                  .orderby-star.each.star
+                  .orderby-logs.each.logs
+                  .orderby-date.each.date
+              .data.body
+                .each.form: input#search(type='text', placeholder='Find files under current directory')
+              #mainfield
+                if stat.file
+                  for file in stat.file
+                    a.data.body(href=file.real)
+                      .each.name= file.name
+                      .each.star 3
+                      .each.logs 2
+                      .each.date(data-date=moment(file.mtime).format('X'))= moment(file.mtime).fromNow()
+              .data.foot
+                .each.name total 1 file, 186 MB
+
+    block foot
+      #foot
+        .container
+          p.pull-left: a(href='/Help') Help
+          p.pull-left: a(href='/Query') Query
+          p.pull-left: a(href='http://status.geta6.net') Status
+          p.pull-right &copy; 2010-2013 geta6
+
+    script(src='/lib/jquery.min.js')
+    script(src='/lib/jquery.pjax.min.js')
+    script(src='/lib/underscore.min.js')
+    script(src='/lib/underscore.string.min.js')
+    !=js('script')
