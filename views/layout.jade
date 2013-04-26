@@ -68,7 +68,6 @@ html
                 else
                   a.data.body(href='#{stat.real}?live')
                     .each.form: input(type='button', value='Download "#{stat.name}"')
-                - console.log(stat)
               .data.foot
                 if stat.file
                   .each.name total - file, - MB

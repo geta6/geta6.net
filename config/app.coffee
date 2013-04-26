@@ -54,8 +54,9 @@ passport.deserializeUser (id, done) ->
 pamauth = path.resolve 'bin', 'pamauth'
 passport.use new Strategy (username, password, done) ->
   process.nextTick ->
+    username = _.str.trim username
     exec "#{pamauth} #{username} #{password}", (err, stdout) ->
-      return (done null, username) if stdout is username
+      return (done null, username) if (_.str.trim stdout) is username
       return done null, no
     # app.get('models').UserUnix.findOne name: username, (err, user) ->
 
