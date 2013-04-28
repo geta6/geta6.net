@@ -18,7 +18,7 @@ body
   position relative
   margin 0 auto
   padding 0 10px
-  max-width 660px
+  max-width 920px
 
 .rise
   color #333333
@@ -67,6 +67,7 @@ body
 
     &.name
       width 60%
+      font-size 13px
       font-weight bold
       text-align left
 
@@ -295,6 +296,7 @@ input
     position fixed
     top 50px
     display none
+    box-shadow 0 1px 0 rgba(255,255,255,0.4), 0 0px 10px rgba(0,0,0,0.1)
 
   #tophead
     z-index 8
@@ -352,3 +354,9 @@ input
       h1
         font-weight bold
         padding-left 10px
+
+@media screen and (max-width:640px)
+  .data
+    .each.name
+      font-size 11px
+
