@@ -31,37 +31,42 @@ findAll = (dir) ->
 
 metaId3 = (file, done) ->
   meta = {}
-  stream = fs.createReadStream file
-  parser = new id3 stream
-  parser.on 'metadata', (res) ->
-    if (path.extname file) is '.mp3'
-      meta =
-        title: res.title
-        album: res.album
-        artist: res.artist[0]
-        albumartist: res.albumartist[0]
-        track: res.track.no
-        disk: res.disk.no
-        picture: res.picture[0].data if res.picture[0]?
-    if (path.extname file) is '.mp4'
-      meta =
-        title: "#{res.disk.no}-#{printf '%02d', res.track.no} #{res.album}"
-        album: res.album
-        artist: res.artist[0]
-        albumartist: res.albumartist[0]
-        track: res.track.no
-        disk: res.disk.no
-        picture: res.picture[0].data if res.picture[0]?
+  ext = path.extname file
+  if ext is '.mp3' or ext is '.mp4'
+    stream = fs.createReadStream file
+    parser = new id3 stream
+    parser.on 'metadata', (res) ->
+      if (path.extname file) is '.mp3'
+        meta =
+          title: res.title
+          album: res.album
+          artist: res.artist[0]
+          albumartist: res.albumartist[0]
+          track: res.track.no
+          disk: res.disk.no
+          picture: res.picture[0].data if res.picture[0]?
+      if (path.extname file) is '.mp4'
+        meta =
+          title: "#{res.disk.no}-#{printf '%02d', res.track.no} #{res.album}"
+          album: res.album
+          artist: res.artist[0]
+          albumartist: res.albumartist[0]
+          track: res.track.no
+          disk: res.disk.no
+          picture: res.picture[0].data if res.picture[0]?
 
-  parser.on 'done', (err) ->
-    stream.destroy() if stream?
-    done err, meta
+    parser.on 'done', (err) ->
+      stream.destroy() if stream?
+      done err, meta
+  else
+    done null, meta
 
 
 module.exports = (app, id, callback) ->
   callback or= ->
   unless mongoose.connections[0].name
-    throw new Error "Could not connect to the mongoose server."
+    mongoose.connect 'mongodb://localhost/media-dev'
+    #throw new Error "Could not connect to the mongoose server."
 
   {Item} = app.get('models')
   creating = []
@@ -78,6 +83,7 @@ module.exports = (app, id, callback) ->
 
     (fall) ->
       async.eachSeries (findAll root), (file, next) ->
+        console.log '>> process', file
         Item.findByPath file, (err, item) ->
           stat = fs.statSync file
           if item and (item.size is stat.size) and (~~(item.date/1000) is ~~(stat.mtime/1000))
@@ -94,11 +100,11 @@ module.exports = (app, id, callback) ->
               star: []
               note: []
               meta: {}
-            creating.push item
+            creating.push item.path
           else
             item.size = stat.size
             item.date = stat.mtime
-            updating.push item
+            updating.push item.path
           return item.save next if stat.isDirectory()
           metaId3 file, (err, meta) ->
             item.meta = meta
@@ -108,10 +114,10 @@ module.exports = (app, id, callback) ->
   ], (err) ->
     console.info "ClockWorks: object creating #{creating.length}"
     if 0 < creating.length
-      console.log '+', create.path for create in creating
+      console.log '+', create for create in creating
     console.info "ClockWorks: object updating #{updating.length}"
     if 0 < updating.length
-      console.log '*', update.path for update in updating
+      console.log '*', update for update in updating
     Item.count (err, count) ->
       console.info "ClockWorks: object counting #{count}"
       callback()
