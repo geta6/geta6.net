@@ -1,74 +1,76 @@
-# module
-global.fs = require 'fs'
-global.util = require 'util'
-global.path = require 'path'
-global.express = require 'express'
-global.mongoose = require 'mongoose'
-global.passport = require 'passport'
-global._ = require 'underscore'
-global._.str = require 'underscore.string'
-global.moment = require 'moment'
+# Local Scope
+require.all = require 'direquire'
+path = require 'path'
+express = require 'express'
+mongoose = require 'mongoose'
+passport = require 'passport'
+connect =
+  store: (require 'connect-mongo') express
+  stream: (require 'connect-stream')
+  assets: (require 'connect-assets')
+    buildDir: 'public'
+  static: (require 'st')
+    url: '/'
+    path: path.resolve 'public'
+    index: no
+    passthrough: yes
 
-# database
-mongoose.connect 'mongodb://localhost/media'
+# Database
+mongoose.connect 'mongodb://localhost/media-dev'
 
-# applcation
+# Main Application
 app = express()
+
 app.disable 'x-powered-by'
-app.set 'util', require path.resolve 'config', 'helper'
-app.set 'port', process.env.PORT || 3030
+app.set 'env', process.env.NODE_ENV || 'development'
+app.set 'port', process.env.PORT || 3000
+app.set 'events', require.all path.resolve 'events'
+app.set 'models', require.all path.resolve 'models'
+app.set 'helper', require.all path.resolve 'helper'
 app.set 'views', path.resolve 'views'
 app.set 'view engine', 'jade'
 app.use express.favicon path.resolve 'public', 'favicon.ico'
-app.use (require 'st')
-  url: '/'
-  path: path.resolve 'public'
-  index: no
-  passthrough: yes
-app.use (require 'connect-assets') buildDir: 'public'
+app.use connect.assets
+app.use connect.static
+app.use app.get('helper').logger()
 app.use express.bodyParser()
 app.use express.methodOverride()
 app.use express.cookieParser()
 app.use express.session
-  secret: 'ed40d31b4de2cbb96308508848262b57'
-  store: new ((require 'connect-redis') express)
+  secret: 'keyboardcat'
   cookie: maxAge: Date.now() + 60*60*24*7
+  store: new connect.store
+    mongoose_connection: mongoose.connections[0]
 app.use passport.initialize()
 app.use passport.session()
-app.use require 'connect-stream'
+app.use connect.stream
 app.use app.router
-app.use (require path.resolve 'config', 'routes') app
-app.use express.errorHandler()
 
-# session
+if (app.get 'env') is 'development'
+  app.use express.errorHandler()
+
+# Route
+(require path.resolve 'config', 'routes') app
+
+# Session
 passport.serializeUser (user, done) ->
   done null, user
-  # done null, user.id
 
 passport.deserializeUser (id, done) ->
   done null, id
-  # app.settings.models.User.findByIdForSession id, done
 
 {Strategy} = require 'passport-local'
-{exec} = require 'child_process'
-pamauth = path.resolve 'bin', 'pamauth'
 passport.use new Strategy (username, password, done) ->
   process.nextTick ->
     username = _.str.trim username
-    exec "#{pamauth} #{username} #{password}", (err, stdout) ->
-      return (done null, username) if (_.str.trim stdout) is username
-      return done null, no
-    # app.get('models').UserUnix.findOne name: username, (err, user) ->
+    password = _.str.trim password
+    pamauth = "php -r \"echo pam_auth('#{username}', '#{password}')?1:0;\""
+    (require 'child_process').exec pamauth, (err, stdout) ->
+      stdout = _.str.trim stdout
+      console.log 'pam', stdout, '->', parseInt(stdout, 10)
+    if username is 'geta' and password is 'hoge'
+      return done null, username
+    return done null, no
 
-    #   return done err if err
-    #   return done null, no unless user
-    #   if username is 'geta6'
-
-# server
-cluster = require 'cluster'
-if cluster.isMaster
-  cluster.fork() for i in [0...(require 'os').cpus().length]
-  cluster.on 'exit', cluster.fork
-else
-  (require 'http').createServer(app).listen (app.get 'port'), ->
-    console.log "HTTPServer pid:#{process.pid} port:#{app.get 'port'}"
+# Exports
+exports = module.exports = app

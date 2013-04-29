@@ -1,17 +1,5 @@
 @import 'nib'
 
-global-reset()
-
-// master
-
-*
-  box-sizing border-box
-
-body
-  padding 75px 0 25px 0
-  font 11px Helvetica, Arial, Sans-Serif
-  color #333333
-
 // common
 
 .container
@@ -39,14 +27,10 @@ body
 .data
   display table
   table-layout fixed
-  // display block
   width 100%
   min-height 36px
   line-height 36px
-  border-color #E5E5E5 !important
-  border-bottom-width 1px
-  border-bottom-style solid
-  background-color #FFFFFF
+  border-bottom 1px solid #E5E5E5
   &:hover
     background-color #FFFFEE
   &:last-child

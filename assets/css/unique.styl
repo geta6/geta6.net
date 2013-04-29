@@ -1,0 +1,129 @@
+@import 'nib'
+
+location(p, t, r, b, l)
+  position p
+  top t
+  left l
+  right r
+  bottom b
+
+#load
+  display none
+  opacity .84
+  z-index 12
+  location fixed 50% auto auto 50%
+  margin-top -45px
+  margin-left -50px
+  width 100px
+  height 90px
+  background-size contain
+  border-radius 3px
+  div
+    width 100px
+    height 90px
+    font-weight bold
+    color white
+    text-align center
+    line-height 90px
+    border-radius 3px
+    background-color rgba(0,0,0,.48)
+
+#auth
+  .container
+    width 300px
+  .data
+    &:hover
+      background transparent
+    &.form
+      &:not(:last-child)
+        border-bottom 0
+
+#info
+  display none
+  .container
+    .info
+      padding 0 15px
+      height 40px
+      font-weight bold
+      line-height 40px
+      text-shadow #FFFFFF 0px 1px 0px
+      border-radius 3px
+      color #264C72
+      border 1px solid #5F9FC6
+      background linear-gradient(top, #D7EAF7, #D0E3EF)
+      &.warn
+        color #A50200
+        border 1px solid #DA9797
+        background linear-gradient(top, #F8D8D8, #EFD0D0)
+    .icon
+      margin-top 3px
+
+
+#head
+  z-index 10
+  location fixed 0 0 auto 0
+  height 50px
+  line-height 50px
+  border-bottom 1px solid #CACACA
+  background linear-gradient(top, #FAFAFA, #EAEAEA)
+  box-shadow 0 1px 0 rgba(255,255,255,0.4), 0 0px 10px rgba(0,0,0,0.1)
+  text-shadow #FFFFFF 0px 1px 0px
+  .container
+    margin-bottom 0
+  li
+    height 50px
+    &.split
+      height 49px
+
+#stat
+  margin-top 4px
+  padding 0 10px
+  height 40px !important
+  line-height 40px
+  border 1px solid #CACACA
+  border-radius 3px
+  background linear-gradient(top, #F1F8FF, #C9D2DE)
+
+#navi
+  ul
+    display table
+    table-layout fixed
+    background linear-gradient(top, #F9F9F9, #EBEBEB)
+    border-radius 3px
+    border-top 1px solid #EAEAEA
+    border-left 1px solid #EAEAEA
+    border-right 1px solid #EAEAEA
+  li
+    display table-cell
+    height 40px
+    line-height 40px
+    font-weight bold
+    border-bottom 2px solid #DADADA
+    border-left 1px solid rgba(255, 255, 255, .5)
+    border-right 1px solid rgba(0, 0, 0, .1)
+    &:first-child
+      border-left none
+      border-radius 3px 0 0 3px
+    &:last-child
+      border-right none
+      border-radius 0 3px 3px 0
+    &:hover
+      &:not(.selected)
+        color #4183C4
+        background-image linear-gradient(top, #FAFBFD, #DAE4EE)
+        background-size 100% 100%
+        border-bottom 2px solid #CFDCE8
+    &.selected
+      color #000000
+      border-bottom 2px solid #D26911
+      background linear-gradient(top, #FCFCFC, #EBEBEB)
+      a
+        cursor default
+
+#foot
+  .container
+    margin-bottom 0
+  ul
+    border-top 1px solid #EEEEEE
+    height 50px
+    line-height 50px

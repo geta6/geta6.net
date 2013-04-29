@@ -2,88 +2,111 @@
 html
   head
     meta(charset='utf-8')
-    meta(name='viewport', content='width=device-width, initial-scale=1, user-scalable=no')
-    !=css('style')
+    meta(name='viewport', content='initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no')
+    meta(name='format-detection', content='telephone=no')
+    meta(name='apple-mobile-web-app-capable', content='yes')
+    meta(name='apple-mobile-web-app-status-bar-style', content='black')
+    link(rel='apple-touch-icon-precomposed', href='/img/app/apple-touch-icon.png')
+    link(rel='apple-touch-icon-precomposed', href='/img/app/apple-touch-icon-57x57.png', sizes='57x57')
+    link(rel='apple-touch-icon-precomposed', href='/img/app/apple-touch-icon-114x114.png', sizes='114x114')
+    link(rel='apple-touch-icon-precomposed', href='/img/app/apple-touch-icon-72x72.png', sizes='72x72')
+    link(rel='apple-touch-icon-precomposed', href='/img/app/apple-touch-icon-144x144.png', sizes='144x144')
+    link(rel='apple-touch-startup-image', href='/img/app/apple-touch-startup-image.png')
+    link(rel='apple-touch-startup-image', href='/img/app/apple-touch-startup-image-320x460.png', media='(device-width:320px) and (device-height:480px) and (-webkit-device-pixel-ratio:1)')
+    link(rel='apple-touch-startup-image', href='/img/app/apple-touch-startup-image-640x920.png', media='(device-width:320px) and (device-height:480px) and (-webkit-device-pixel-ratio:2)')
+    link(rel='apple-touch-startup-image', href='/img/app/apple-touch-startup-image-640x1096.png', media='(device-width:320px) and (device-height:568px) and (-webkit-device-pixel-ratio:2)')
+    link(rel='apple-touch-startup-image', href='/img/app/apple-touch-startup-image-768x1004.png', media='(device-width:768px) and (device-height:1024px) and (-webkit-device-pixel-ratio:1) and (orientation:portrait)')
+    link(rel='apple-touch-startup-image', href='/img/app/apple-touch-startup-image-748x1024.png', media='(device-width:768px) and (device-height:1024px) and (-webkit-device-pixel-ratio:1) and (orientation:landscape)')
+    link(rel='apple-touch-startup-image', href='/img/app/apple-touch-startup-image-1536x2008.png', media='(device-width:768px) and (device-height:1024px) and (-webkit-device-pixel-ratio:2) and (orientation:portrait)')
+    link(rel='apple-touch-startup-image', href='/img/app/apple-touch-startup-image-1496x2048.png', media='(device-width:768px) and (device-height:1024px) and (-webkit-device-pixel-ratio:2) and (orientation:landscape)')
+
+    != css('master')
+    != css('common')
+    != css('unique')
+
   body
-    #load
-      .load loading...
+
+    #load(style='background-image:url(/img/load1.gif)')
+      div Loading...
+
+    block info
+      #info(style='display:#{err?'block':'none'}')
+        .container
+          .info.warn
+            p.pull-left= err
+            a.icon.shut.pull-right(href='')
 
     block head
       #head
         .container
-          a#logo.each.pull-left(href='/')
-          a#play.each
-          if req.isAuthenticated()
-            a#user.each.pull-right(href='/user')
+          ul.list
+            li.title: a(href='/') Vide
+            li 2.1.0
+            if req.isAuthenticated()
+              li.split
+              li#stat: a(href='#') nowplaying
+              li.pull-right: a(href='#').tips
+                .icon.conf
+                .tips Settings
+              li.pull-right: a(href='#').tips
+                .icon.user
+                .tips geta6
 
     block navi
       #navi
         .container
-          .data.head
-            a.each(href='/Apps') Apps
-            a.each(href='/Books') Books
-            a.each(href='/Games') Games
-            a.each(href='/Movies') Movies
-            a.each(href='/Music') Music
+          ul.list.navi
+            - var href = req.url.split('/')
+            - var addr = href[1]
+            li.icons(style=3>href.length?'opacity:0;width:0':''): a(href='javascript:dirup()'): .icon.over
+            li(class=addr=='Apps'?'selected':''): a(href='/Apps') Apps
+            li(class=addr=='Books'?'selected':''): a(href='/Books') Books
+            li(class=addr=='Games'?'selected':''): a(href='/Games') Games
+            li(class=addr=='Movies'?'selected':''): a(href='/Movies') Movies
+            li(class=addr=='Music'?'selected':''): a(href='/Music') Music
 
     block body
       #body
-        unless stat.live
-          .container
-            .flash.warn File Not Exists :(
-
         .container
-          .exterior
-            .interior
-              if stat.file
-                #fixhead
-                  .data.head
-                    .orderby-name.each.name name
-                    .orderby-star.each.star
-                    .orderby-logs.each.logs
-                    .orderby-date.each.date
-                #tophead
-                  .data.head
-                    .orderby-name.each.name name
-                    .orderby-star.each.star
-                    .orderby-logs.each.logs
-                    .orderby-date.each.date
-                .data.body
-                  .each.form: input#search(type='text', placeholder='will develop', disabled='disabled')
-                  //- Find files under current directory
-                #mainfield
-                  for file in stat.file
-                    a.data.body(href=file.real)
-                      .each.name= file.name
-                      .each.star -
-                      .each.logs -
-                      .each.date(data-date=moment(file.mtime).format('X'))= moment(file.mtime).fromNow()
-              else
-                if stat.type.match(/video/)
-                  .data.body
-                    .each: video(src='#{stat.real}?live', controls='controls', autoplay)
-                else if stat.type.match(/audio/)
-                  .data.body
-                    .each: audio(src='#{stat.real}?live', controls='controls', autoplay)
-                else
-                  a.data.body(href='#{stat.real}?live')
-                    .each.form: input(type='button', value='Download "#{stat.name}"')
-              .data.foot
-                if stat.file
-                  .each.name total - file, - MB
-                else
-                  .each.name #{stat.type}, #{parseInt(stat.size/1024/1024)} MB, #{moment(stat.mtime).fromNow()}
+          .bind.stud
+            .data.head
+              a.each.orderby.name(href='javascript:void(0)') name
+              a.each.orderby.star(href='javascript:void(0)'): .icon.star
+              a.each.orderby.logs(href='javascript:void(0)'): .icon.logs
+              a.each.orderby.date.sort-dsc(href='javascript:void(0)'): .icon.date
+            .data.form
+              .each.field: input#search(type='text', placeholder='Search')
+            #data
+              include browse
+              //- for i in Array(20)
+              //-   a.data.body(href='#')
+              //-     - var name = 'each ' + _.random(0, 200)
+              //-     .each.free.name(data-sort=name)= name
+              //-     - var star = _.random(0, 100)
+              //-     .each.info.star(data-sort=star)= star
+              //-     - var logs = _.random(0, 100)
+              //-     .each.info.logs(data-sort=logs)= logs
+              //-     - var date = _.random(1306045270229, 1367155570229)
+              //-     .each.text.date(data-sort=date)= _.date(date).fromNow()
+            //- .data.foot
+            //-   .each foot-each 1
+            //-   .each foot-each 2
+            //-   .each foot-each 3
 
     block foot
       #foot
         .container
-          p.pull-left: a(href='/Help') Help
-          p.pull-left: a(href='/Query') Query
-          p.pull-left: a(href='http://status.geta6.net') Status
-          p.pull-right &copy; 2010-2013 geta6
+          ul.list.docs
+            li: a(href='http://status.geta6.net') Status
+            if req.isAuthenticated()
+              li: a(href='#') Help
+              li: a(href='#') Query
+            li.pull-right &copy; 2010-#{new Date().getYear()+1900} geta6
 
     script(src='/lib/jquery.min.js')
     script(src='/lib/jquery.pjax.min.js')
     script(src='/lib/underscore.min.js')
     script(src='/lib/underscore.string.min.js')
-    !=js('script')
+    !=js('layout')
+    !=js('sortfield')
+    !=js('pushstate')

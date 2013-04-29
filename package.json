@@ -1,28 +1,32 @@
 {
-  "name": "geta6.net",
-  "version": "0.4.2",
+  "name": "vide",
+  "version": "2.1.0",
   "private": true,
   "scripts": {
     "start": "node web.js"
   },
   "dependencies": {
+    "coffee-script": "*",
+    "hooker": "*",
+    "optimist": "*",
+    "underscore": "*",
+    "underscore.string": "*",
+    "moment": "*",
+    "async": "*",
+    "mime": "*",
+    "printf": "*",
+    "musicmetadata": "*",
+    "direquire": "*",
     "express": "*",
     "mongoose": "*",
     "passport": "*",
     "passport-local": "*",
-    "coffee-script": "*",
-    "async": "*",
-    "printf": "*",
-    "underscore": "*",
-    "underscore.string": "*",
-    "connect-redis": "*",
+    "connect-mongo": "*",
     "connect-assets": "*",
-    "moment": "*",
-    "mime": "*",
-    "musicmetadata": "*",
+    "connect-stream": "*",
     "st": "*",
-    "nib": "*",
     "jade": "*",
-    "stylus": "*"
+    "stylus": "*",
+    "nib": "*"
   }
 }

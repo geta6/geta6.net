@@ -1,0 +1,232 @@
+@import 'nib'
+
+location(p, t, r, b, l)
+  position p
+  top t
+  left l
+  right r
+  bottom b
+
+// Function
+
+.pull-left
+  float left
+
+.pull-right
+  float right
+
+.tips
+  position relative
+  .tips
+    left 50%
+    margin-top -5px
+    margin-left -50px
+    padding 5px
+    width 100px
+    position absolute
+    display none
+    color white
+    line-height 1.5em
+    // font-weight bold
+    border-radius 3px
+    background rgba(0,0,0,.72)
+    text-shadow none
+    &:after
+      content ' '
+      position absolute
+      border-bottom 6px solid rgba(0,0,0,.72)
+      border-right 6px solid transparent
+      border-left 6px solid transparent
+      top 0
+      left 50%
+      margin-top -6px
+      margin-left -5px
+  &:hover
+    .tips
+      display block
+
+// UI Elements
+
+.container
+  position relative
+  margin 0 auto 25px auto
+  padding 0 10px
+  max-width 920px
+
+// Bind
+
+.bind
+  position relative
+  margin 0 auto
+  display block
+
+  .data
+    display table
+    width 100%
+    table-layout fixed
+    width 100%
+    min-height 36px
+    line-height 36px
+
+    .each
+      position relative
+      display table-cell
+      min-height 36px
+      padding 0 10px
+      overflow ellipsis
+      vertical-align top
+      &.center
+        text-align center
+      &.name
+        width 60%
+      &.date
+        width 20%
+        text-align center
+        font-size 9px
+      &.star, &.note
+        width 10%
+        text-align center
+        font-size 9px
+      &:after
+        content ' '
+        location absolute 0 0 0 auto
+        display block
+        width 15px
+        background-size 32px 32px
+        background-position center center
+        background-repeat no-repeat
+      &.sort-asc
+        &:after
+          background-image url('/img/icon/sort-asc.png')
+      &.sort-dsc
+        &:after
+          background-image url('/img/icon/sort-dsc.png')
+
+  &.stud
+    box-shadow 0 0 0 3px #EEEEEE
+    border-radius 1px
+    .data
+      border-left 1px solid #CACACA
+      border-right 1px solid #CACACA
+      border-bottom 1px solid #E5E5E5
+      &:last-child
+        border-bottom 1px solid #CACACA
+      &:hover
+        background-color #FFFFEE
+      &.form
+        padding 10px 0
+      &.head
+        border-top 1px solid #CACACA
+        .each
+          cursor pointer
+        .icon
+          position absolute
+          top 50%
+          left 50%
+          width w = 24px
+          height h = 24px
+          margin-top -(w/2)px
+          margin-left -(h/2)px
+      &.head, &.foot
+        font-weight bold
+        background linear-gradient(top, #FAFAFA, #EAEAEA)
+        text-shadow #FFFFFF 0px 1px 0px
+        border-bottom 1px solid #CACACA
+        .each
+          border-left 1px solid rgba(255, 255, 255, .5)
+          border-right 1px solid rgba(0, 0, 0, .1)
+          &:first-child
+            border-left none
+          &:last-child
+            border-right none
+          &:hover
+            background-image linear-gradient(top, #FAFBFD, #DAE4EE)
+          &:active
+            background #DAE4EE
+
+      &.head
+        min-height 42px
+        line-height 42px
+
+// List Menu
+
+.list
+  width 100%
+  li
+    display inline-block
+    vertical-align top
+    margin 0 5px
+    text-align center
+    &:first-child
+      margin-left 0
+    &:last-child
+      margin-right 0
+    &.title
+      font-size 20px
+      font-weight bold
+    &.split
+      width 0
+      border-left 1px solid #EAEAEA
+      border-right 1px solid #FCFCFC
+    &.icons
+      width 30px
+    a
+      display block
+
+// Document Style
+
+.docs
+  a
+    color #3A7FC6
+    &:hover
+      text-decoration underline
+
+// Icon
+
+.icon
+  display inline-block
+  vertical-align middle
+  margin-top -4px
+  width 32px
+  height 32px
+  background-size contain
+  background-position center center
+  &.user
+    background-image url('/img/icon/user.png')
+  &.date
+    background-image url('/img/icon/date.png')
+  &.logs
+    background-image url('/img/icon/log.png')
+    &.multi
+      background-image url('/img/icon/logs.png')
+  &.tags
+    background-image url('/img/icon/tag.png')
+    &.multi
+      background-image url('/img/icon/tags.png')
+  &.star
+    background-image url('/img/icon/star.png')
+    &.blank
+      background-image url('/img/icon/star.blank.png')
+    &.color
+      background-image url('/img/icon/star.color.png')
+  &.conf
+    background-image url('/img/icon/conf.png')
+  &.shut
+    background-image url('/img/icon/shut.png')
+  &.back
+    background-image url('/img/icon/back.png')
+  &.next
+    background-image url('/img/icon/next.png')
+  &.over
+    background-image url('/img/icon/over.png')
+
+@media screen and (max-device-width:320px)
+  .head
+    .icon
+      width 16px !important
+      height 16px !important
+      margin-top -8px !important
+      margin-left -8px !important
+  .each
+    &:after
+      width 10px !important

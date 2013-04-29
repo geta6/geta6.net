@@ -1,0 +1,17 @@
+- console.log(items)
+for item in items
+  a.data.body(href=item.path.replace('/media/var', ''))
+    .each.name(data-sort=item.name)= item.name
+    .each.star(data-sort=item.star.length)= item.star.length
+    .each.note(data-sort=item.note.length)= item.note.length
+    .each.date(data-sort=item.date)= _.date(item.date).fromNow()
+
+  //- a.data.body(href='#')
+  //-   - var name = 'each ' + _.random(0, 200)
+  //-   .each.name(data-sort=name)= name
+  //-   - var star = _.random(0, 100)
+  //-   .each.star(data-sort=star)= star
+  //-   - var logs = _.random(0, 100)
+  //-   .each.logs(data-sort=logs)= logs
+  //-   - var date = _.random(1306045270229, 1367155570229)
+  //-   .each.date(data-sort=date)= _.date(date).fromNow()

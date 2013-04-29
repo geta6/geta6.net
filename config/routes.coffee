@@ -1,12 +1,21 @@
 module.exports = (app) ->
 
-  events = (require path.resolve 'config', 'events') app
-  LG = app.get('util').logger()
-  EN = app.get('util').ensure
+  EN = (req, res, next) ->
+    return next() if req.isAuthenticated()
+    return res.redirect '/auth/signin'
 
-  # method routing          flags   route
-  app.post '/auth/signin',  LG,     events.auth.signin
-  app.get  '/auth/signout', LG,     events.auth.signout
-  app.get  '*',             LG, EN, events.main
+  # Import
+  SiteEvent = app.get('events').SiteEvent app
 
-  return app.get('util').logger()
+  # Rotues
+  app.all     '/auth/signin',        SiteEvent.auth.signin
+  app.all     '/auth/signout',  EN,  SiteEvent.auth.signout
+  app.get     '/Apps*?',        EN,  SiteEvent.browse
+  app.get     '/Books*?',       EN,  SiteEvent.browse
+  app.get     '/Games*?',       EN,  SiteEvent.browse
+  app.get     '/Movies*?',      EN,  SiteEvent.browse
+  app.get     '/Music*?',       EN,  SiteEvent.browse
+  app.get     '/',              EN,  SiteEvent.func.star
+  app.get     '/star',          EN,  SiteEvent.func.star
+  app.get     '/logs',          EN,  SiteEvent.func.logs
+  app.all     '*',              EN,  SiteEvent.nodata
