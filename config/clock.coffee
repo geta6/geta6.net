@@ -32,32 +32,34 @@ findAll = (dir) ->
 metaId3 = (file, done) ->
   meta = {}
   ext = path.extname file
-  if ext is '.mp3' or ext is '.mp4'
+  if ext is '.mp3'
     stream = fs.createReadStream file
     parser = new id3 stream
     parser.on 'metadata', (res) ->
-      if (path.extname file) is '.mp3'
-        meta =
-          title: res.title
-          album: res.album
-          artist: res.artist[0]
-          albumartist: res.albumartist[0]
-          track: res.track.no
-          disk: res.disk.no
-          picture: res.picture[0].data if res.picture[0]?
-      if (path.extname file) is '.mp4'
-        meta =
-          title: "#{res.disk.no}-#{printf '%02d', res.track.no} #{res.album}"
-          album: res.album
-          artist: res.artist[0]
-          albumartist: res.albumartist[0]
-          track: res.track.no
-          disk: res.disk.no
-          picture: res.picture[0].data if res.picture[0]?
-
+      meta =
+        title: res.title
+        album: res.album
+        artist: res.artist[0]
+        albumartist: res.albumartist[0]
+        track: res.track.no
+        disk: res.disk.no
+        picture: res.picture[0].data if res.picture[0]?
     parser.on 'done', (err) ->
-      stream.destroy() if stream?
+      stream.destroy()
       done err, meta
+  else if ext is '.mp4'
+    disk = (path.basename file).replace /^([^\s]+)-[^\s]+ .*\.mp4/, '$1'
+    track = (path.basename file).replace /^[^\s]+-([^\s]+) .*\.mp4/, '$1'
+    name = (path.basename file).replace /^[^\s]+-[^\s]+ (.*)\.mp4/, '$1'
+    console.log disk, track, name
+    done null,
+      title: path.basename file
+      album: name
+      artist: name
+      albumartist: name
+      track: track
+      disk: disk
+      picture: null
   else
     done null, meta
 
@@ -83,7 +85,6 @@ module.exports = (app, id, callback) ->
 
     (fall) ->
       async.eachSeries (findAll root), (file, next) ->
-        console.log '>> process', file
         Item.findByPath file, (err, item) ->
           stat = fs.statSync file
           if item and (item.size is stat.size) and (~~(item.date/1000) is ~~(stat.mtime/1000))
