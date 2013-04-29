@@ -51,7 +51,6 @@ metaId3 = (file, done) ->
     disk = (path.basename file).replace /^([^\s]+)-[^\s]+ .*\.mp4/, '$1'
     track = (path.basename file).replace /^[^\s]+-([^\s]+) .*\.mp4/, '$1'
     name = (path.basename file).replace /^[^\s]+-[^\s]+ (.*)\.mp4/, '$1'
-    console.log disk, track, name
     done null,
       title: path.basename file
       album: name
@@ -106,6 +105,7 @@ module.exports = (app, id, callback) ->
             item.size = stat.size
             item.date = stat.mtime
             updating.push item.path
+          console.log 'process', file
           return item.save next if stat.isDirectory()
           metaId3 file, (err, meta) ->
             item.meta = meta

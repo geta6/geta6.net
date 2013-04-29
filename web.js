@@ -87,11 +87,7 @@ if (cluster.isMaster) {
   }
   // Clock Works
   console.log('>>', 'ClockWorks#set', '@'+process.pid);
-  if (argv.c) {
-    clockwork();
-  } else {
-    setInterval(clockwork, 120 * 1000);
-  }
+  argv.c ? clockwork() : setInterval(clockwork, 120 * 1000);
 } else {
   http.createServer(app).listen(port);
 }
