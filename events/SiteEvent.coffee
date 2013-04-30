@@ -16,7 +16,7 @@ exports.SiteEvent = (app) ->
       order.asc = if order.asc is 'false' then no else yes
     sort = {}
     sort[order.by] = if order.asc then 1 else -1
-    Item.findByRegex (new RegExp "^#{uri}", 'g'), (uri.split '/').length, sort, (err, items) ->
+    Item.findByRegex (new RegExp "^#{uri}"), (uri.split '/').length, sort, (err, items) ->
       console.log items.length
       if items.length is 1
         console.log 'this is file'
