@@ -8,8 +8,15 @@ exports.SiteEvent = (app) ->
 
   browse: (req, res) ->
     res.statusCode = 200 if req.url is '/'
-    uri = "/media/var#{decodeURI req.url}"
-    Item.findByRegex (new RegExp "^#{uri}", 'g'), (uri.split '/').length, (err, items) ->
+    uri = app.get('helper').escape 'regex', "/media/var#{decodeURI req.url}"
+    unless req.query.order
+      order = { by: 'date', asc: no }
+    else
+      order = req.query.order
+      order.asc = if order.asc is 'false' then no else yes
+    sort = {}
+    sort[order.by] = if order.asc then 1 else -1
+    Item.findByRegex (new RegExp "^#{uri}", 'g'), (uri.split '/').length, sort, (err, items) ->
       res.render (xmlhttp req, 'browse', 'layout'),
         items: items
         req: req

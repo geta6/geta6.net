@@ -63,8 +63,7 @@ metaMp4 = (file, done) ->
 module.exports = (app, id, callback) ->
   callback or= ->
   unless mongoose.connections[0].name
-    mongoose.connect 'mongodb://localhost/media-dev'
-    #throw new Error "Could not connect to the mongoose server."
+    throw new Error "Could not connect to the mongoose server."
 
   {Item} = app.get('models')
   creating = []
@@ -73,6 +72,7 @@ module.exports = (app, id, callback) ->
   async.waterfall [
     (fall) ->
       Item.findDeads (err, items) ->
+        items = [] unless items
         console.info "ClockWorks: object removing #{items.length}"
         for item in items
           console.log '-', item.path
@@ -82,7 +82,6 @@ module.exports = (app, id, callback) ->
     (fall) ->
       async.eachSeries (findAll root), (file, next) ->
         Item.findByPath file, (err, item) ->
-          console.log 'process', file
           return next() unless fs.existsSync file
           stat = fs.statSync file
           if item and (item.size is stat.size) and (~~(item.date/1000) is ~~(stat.mtime/1000))
@@ -104,6 +103,7 @@ module.exports = (app, id, callback) ->
             item.size = stat.size
             item.date = stat.mtime
             updating.push item.path
+          console.log 'ClockWorks:', 'process', file
           switch path.extname file
             when '.mp3'
               metaMp3 file, (err, meta) ->
@@ -125,6 +125,4 @@ module.exports = (app, id, callback) ->
     console.info "ClockWorks: object updating #{updating.length}"
     if 0 < updating.length
       console.log '*', update for update in updating
-    Item.count (err, count) ->
-      console.info "ClockWorks: object counting #{count}"
-      callback()
+    callback()

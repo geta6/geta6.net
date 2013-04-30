@@ -1,8 +1,10 @@
+
+window.order = order =
+  by: 'date'
+  asc: false
+
 $ ->
   if ($ '#data').size()
-    order =
-      by: 'date'
-      asc: false
     ($ '.orderby').on 'click', ->
       ($ '.orderby')
         .removeClass('sort-asc')

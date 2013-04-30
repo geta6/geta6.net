@@ -32,6 +32,15 @@ getContents = ->
       opacity: 0
       width: 0
     , 240
+  # reset sortfield
+  #window.order =
+  #  by: 'date'
+  #  asc: false
+  #($ '.orderby')
+  #  .removeClass('sort-asc')
+  #  .removeClass('sort-dsc')
+  #($ '.orderby.date').addClass "sort-#{if order.asc then 'asc' else 'dsc'}"
+
   $load.fadeIn 60
   $info.slideUp 120
   $data.slideUp 120, ->
@@ -42,6 +51,7 @@ getContents = ->
         $data.slideDown 120
     else
       $.ajax path,
+        data: order: order
         complete: (res) ->
           if res.status is 0
             ($ '#info p').text('Could not connect to the server.')
@@ -69,9 +79,10 @@ $ ->
     href = '/star' if href is '/'
     return yes if href.match /^javascript/
     return yes if href.match /#/
+    return yes if href.match /^https*:\/\//
     return yes unless window.history.pushState?
     event.preventDefault()
     unless load
       load = yes
-      window.history.pushState state:yes, '', href
+      window.history.pushState order, '', href
       getContents()

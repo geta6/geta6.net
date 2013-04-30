@@ -5,16 +5,18 @@ ItemSchema = new mongo.Schema
   path: { type: String, unique: yes, index: yes }
   name: { type: String }
   size: { type: Number }
-  deep: { type: Number }
-  type: { type: String, default: 'application/octet-stream' }
-  date: { type: Date, default: Date.now() }
+  deep: { type: Number, index: yes }
+  type: { type: String, default: 'application/octet-stream', index: yes }
+  date: { type: Date, default: Date.now(), index: yes }
   tags: [{ type: String }]
   star: [{ type: mongo.Schema.Types.ObjectId, ref: 'users' }]
   note: [{ type: mongo.Schema.Types.ObjectId, ref: 'notes' }]
   meta: [{ type: mongo.Schema.Types.Mixed }]
 
-ItemSchema.statics.findByRegex = (regex, deep, done) ->
-  @find {path: regex, deep: deep}, {}, sort: date: -1, (err, items) ->
+select = 'path name size deep type date tags star note'
+
+ItemSchema.statics.findByRegex = (regex, deep, sort, done) ->
+  @find {path: regex, deep: deep}, select, sort: sort, (err, items) ->
     console.error 'ItemSchema:', err if err
     return done err, items
 
@@ -25,7 +27,7 @@ ItemSchema.statics.findByPath = (path, done) ->
 
 ItemSchema.statics.findDeads = (done) ->
   deads = []
-  @find {}, {}, {}, (err, items) ->
+  @find {}, 'path', {}, (err, items) ->
     console.error 'ItemSchema:', err if err
     for item in items
       deads.push item unless fs.existsSync item.path
