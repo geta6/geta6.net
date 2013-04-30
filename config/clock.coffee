@@ -82,10 +82,11 @@ module.exports = (app, id, callback) ->
     (fall) ->
       async.eachSeries (findAll root), (file, next) ->
         Item.findByPath file, (err, item) ->
+          console.log 'process', file
+          return next() unless fs.existsSync file
           stat = fs.statSync file
           if item and (item.size is stat.size) and (~~(item.date/1000) is ~~(stat.mtime/1000))
             return next()
-          console.log 'process', file
           unless item
             item = new Item
               path: file
