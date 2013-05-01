@@ -1,11 +1,10 @@
-
 window.order = order =
   by: 'date'
   asc: false
 
 $ ->
   if ($ '#data').size()
-    ($ '.orderby').on 'click', ->
+    ($ document).on 'click', '.orderby', ->
       ($ '.orderby')
         .removeClass('sort-asc')
         .removeClass('sort-dsc')
@@ -28,8 +27,8 @@ $ ->
         num = yes
       ($ @).addClass "sort-#{if order.asc then 'asc' else 'dsc'}"
       ($ '#data').html ($ '#data .data').sort (a, b) ->
-        a = ($ a).find(".#{order.by}").attr 'data-sort'
-        b = ($ b).find(".#{order.by}").attr 'data-sort'
+        a = ($ a).attr "data-#{order.by}"
+        b = ($ b).attr "data-#{order.by}"
         if num
           a = an unless isNaN (an = parseInt a, 10)
           b = bn unless isNaN (bn = parseInt b, 10)

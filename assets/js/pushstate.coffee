@@ -41,6 +41,7 @@ getContents = ->
   #  .removeClass('sort-dsc')
   #($ '.orderby.date').addClass "sort-#{if order.asc then 'asc' else 'dsc'}"
 
+  $load.text 'Loading...'
   $load.fadeIn 60
   $info.slideUp 120
   $data.slideUp 120, ->
@@ -51,7 +52,7 @@ getContents = ->
         $data.slideDown 120
     else
       $.ajax path,
-        data: order: order
+        data: order: window.order
         complete: (res) ->
           if res.status is 0
             ($ '#info p').text('Could not connect to the server.')

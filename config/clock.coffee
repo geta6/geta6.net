@@ -1,9 +1,7 @@
 fs = require 'fs'
 path = require 'path'
-id3 = require 'musicmetadata'
 mime = require 'mime'
 async = require 'async'
-printf = require 'printf'
 mongoose = require 'mongoose'
 
 root = '/media/var'
@@ -29,36 +27,6 @@ findAll = (dir) ->
     return _.uniq res
   return dir
 
-metaMp3 = (file, done) ->
-  meta = {}
-  stream = fs.createReadStream file
-  parser = new id3 stream
-  parser.on 'metadata', (res) ->
-    meta =
-      title: res.title
-      album: res.album
-      artist: res.artist[0]
-      albumartist: res.albumartist[0]
-      track: res.track.no
-      disk: res.disk.no
-      picture: res.picture[0].data if res.picture[0]?
-  parser.on 'done', (err) ->
-    stream.destroy()
-    done err, meta
-
-metaMp4 = (file, done) ->
-  disk = (path.basename file).replace /^([^\s]+)-[^\s]+ .*\.mp4/, '$1'
-  track = (path.basename file).replace /^[^\s]+-([^\s]+) .*\.mp4/, '$1'
-  name = (path.basename file).replace /^[^\s]+-[^\s]+ (.*)\.mp4/, '$1'
-  done null,
-    title: path.basename file
-    album: name
-    artist: name
-    albumartist: name
-    track: track
-    disk: disk
-    picture: null
-
 
 module.exports = (app, id, callback) ->
   callback or= ->
@@ -81,7 +49,7 @@ module.exports = (app, id, callback) ->
 
     (fall) ->
       async.eachSeries (findAll root), (file, next) ->
-        Item.findByPath file, (err, item) ->
+        Item.findOne path: file, 'path name size date', {}, (err, item) ->
           return next() unless fs.existsSync file
           stat = fs.statSync file
           if item and (item.size is stat.size) and (~~(item.date/1000) is ~~(stat.mtime/1000))
@@ -97,24 +65,13 @@ module.exports = (app, id, callback) ->
               tags: []
               star: []
               note: []
-              meta: {}
             creating.push item.path
           else
             item.size = stat.size
             item.date = stat.mtime
             updating.push item.path
           console.log 'ClockWorks:', 'process', file
-          switch path.extname file
-            when '.mp3'
-              metaMp3 file, (err, meta) ->
-                item.meta = meta
-                return item.save next
-            when '.mp4'
-              metaMp4 file, (err, meta) ->
-                item.meta = meta
-                return item.save next
-            else
-              return item.save next
+          return item.save next
       , (err) ->
         fall()
 

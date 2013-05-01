@@ -28,28 +28,29 @@ html
 
     #load Loading...
 
+    #temp
+
     block info
       #info(style='display:#{err?'block':'none'}')
         .container
           .info.warn
             p.pull-left= err
-            a.icon.shut.pull-right(href='')
+            a.icon.shut.pull-right(href='javascript:void(0)')
 
     block head
       #head
         .container
           ul.list
-            li.title: a(href='/') Vide
-            li 2.1.0
+            li.title: a(href='/') Strat
+            li.version 2.1.2
             if req.isAuthenticated()
-              li.split
               li#stat: a(href='#') nowplaying
-              li.pull-right: a(href='#').tips
+              li.icon: a(href='#').tips
+                .icon.user
+                .tips= req.user
+              li.icon: a(href='#').tips
                 .icon.conf
                 .tips Settings
-              li.pull-right: a(href='#').tips
-                .icon.user
-                .tips geta6
 
     block navi
       #navi
@@ -68,29 +69,8 @@ html
       #body
         .container
           .bind.stud
-            .data.head
-              a.each.orderby.name(href='javascript:void(0)') name
-              a.each.orderby.star(href='javascript:void(0)'): .icon.star
-              a.each.orderby.logs(href='javascript:void(0)'): .icon.logs
-              a.each.orderby.date.sort-dsc(href='javascript:void(0)'): .icon.date
-            .data.form
-              .each.field: input#search(type='text', placeholder='Search')
             #data
               include browse
-              //- for i in Array(20)
-              //-   a.data.body(href='#')
-              //-     - var name = 'each ' + _.random(0, 200)
-              //-     .each.free.name(data-sort=name)= name
-              //-     - var star = _.random(0, 100)
-              //-     .each.info.star(data-sort=star)= star
-              //-     - var logs = _.random(0, 100)
-              //-     .each.info.logs(data-sort=logs)= logs
-              //-     - var date = _.random(1306045270229, 1367155570229)
-              //-     .each.text.date(data-sort=date)= _.date(date).fromNow()
-            //- .data.foot
-            //-   .each foot-each 1
-            //-   .each foot-each 2
-            //-   .each foot-each 3
 
     block foot
       #foot
@@ -106,6 +86,7 @@ html
     script(src='/lib/jquery.pjax.min.js')
     script(src='/lib/underscore.min.js')
     script(src='/lib/underscore.string.min.js')
-    !=js('layout')
+    !=js('master')
+    !=js('search')
     !=js('sortfield')
     !=js('pushstate')

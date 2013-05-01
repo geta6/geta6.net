@@ -8,7 +8,8 @@ exports.SiteEvent = (app) ->
 
   browse: (req, res) ->
     res.statusCode = 200 if req.url is '/'
-    uri = app.get('helper').escape 'regex', "/media/var#{decodeURI req.url}"
+    uri = "/media/var#{decodeURI req.url}"
+    reg = new RegExp "^#{app.get('helper').escape 'regex', uri}"
     unless req.query.order
       order = { by: 'date', asc: no }
     else
@@ -16,34 +17,40 @@ exports.SiteEvent = (app) ->
       order.asc = if order.asc is 'false' then no else yes
     sort = {}
     sort[order.by] = if order.asc then 1 else -1
-    Item.findByRegex (new RegExp "^#{uri}"), (uri.split '/').length, sort, (err, items) ->
-      console.log items.length
-      if items.length is 1
-        console.log 'this is file'
-      res.render (xmlhttp req, 'browse', 'layout'),
-        items: items
-        req: req
-        err: err
+    Item.findByPath uri, (err, item) ->
+      if req.query.image and item.meta[0].picture
+        console.log item.meta[0].picture.buffer
+        return res.end item.meta[0].picture.buffer
+        # console.log req.query.image
+      Item.findByRegex reg, (uri.split '/').length, sort, (err, items) ->
+        res.render (xmlhttp req, 'browse', 'layout'),
+          items: items
+          file: item
+          req: req
+          err: err
 
   nodata: (req, res) ->
     res.statusCode = 404
     return res.render (xmlhttp req, 'browse', 'layout'),
       items: []
+      self: {}
       req: req
       err: null
 
-  func:
-    star: (req, res) ->
-      res.render (xmlhttp req, 'browse', 'layout'),
-        items: []
-        req: req
-        err: null
+  # func:
+  #   star: (req, res) ->
+  #     res.render (xmlhttp req, 'browse', 'layout'),
+  #       items: []
+  #       self: {}
+  #       req: req
+  #       err: null
 
-    logs: (req, res) ->
-      res.render (xmlhttp req, 'browse', 'layout'),
-        items: []
-        req: req
-        err: null
+  #   logs: (req, res) ->
+  #     res.render (xmlhttp req, 'browse', 'layout'),
+  #       items: []
+  #       self: {}
+  #       req: req
+  #       err: null
 
   auth:
     signin: (req, res, next) ->

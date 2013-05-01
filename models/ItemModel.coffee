@@ -15,11 +15,6 @@ ItemSchema = new mongo.Schema
 
 select = 'path name size deep type date tags star note'
 
-ItemSchema.statics.findByRegex = (regex, deep, sort, done) ->
-  @find {path: regex, deep: deep}, select, sort: sort, (err, items) ->
-    console.error 'ItemSchema:', err if err
-    return done err, items
-
 ItemSchema.statics.findByPath = (path, done) ->
   @findOne path: path, {}, {}, (err, item) ->
     console.error 'ItemSchema:', err if err

@@ -24,7 +24,6 @@ app = express()
 app.disable 'x-powered-by'
 app.set 'env', process.env.NODE_ENV || 'development'
 app.set 'port', process.env.PORT || 3050
-app.set 'events', require.all path.resolve 'events'
 app.set 'models', require.all path.resolve 'models'
 app.set 'helper', require.all path.resolve 'helper'
 app.set 'views', path.resolve 'views'
@@ -67,13 +66,13 @@ passport.use new Strategy (username, password, done) ->
     pamauth = "php -r \"echo pam_auth('#{username}', '#{password}')?1:0;\""
     (require 'child_process').exec pamauth, (err, stdout) ->
       success = parseInt (_.str.trim stdout), 10
+      console.log success
       if isNaN success
         if username is 'geta' and password is 'hoge'
           return done null, username
       if success is 0
         return done null, no
-      if success is 1
-        return done null, username
+      return done null, username
 
 # Exports
 exports = module.exports = app

@@ -1,9 +1,49 @@
-for item in items
-  a.data.body(href=item.path.replace('/media/var', ''))
-    .each.name(data-sort=item.name)= item.name
-    .each.star(data-sort=item.star.length)= item.star.length
-    .each.note(data-sort=item.note.length)= item.note.length
-    .each.date(data-sort=item.date)= _.date(item.date).fromNow()
-.data.foot
-  .each total #{items.length}
+if data && data.info
+  if data.info.type == 'text/directory'
+    .data.head
+      - var order = req.query.order?req.query.order:{by: 'date', asc: 'false'};
+      a.each.orderby.name(class=order.by=='name'?(order.asc=='true'?'sort-asc':'sort-dsc'):'', href='javascript:void(0)') name
+      a.each.orderby.star(class=order.by=='star'?(order.asc=='true'?'sort-asc':'sort-dsc'):'', href='javascript:void(0)'): .icon.star
+      a.each.orderby.logs(class=order.by=='logs'?(order.asc=='true'?'sort-asc':'sort-dsc'):'', href='javascript:void(0)'): .icon.logs
+      a.each.orderby.date(class=order.by=='date'?(order.asc=='true'?'sort-asc':'sort-dsc'):'', href='javascript:void(0)'): .icon.date
+    .data.form
+      .each.field: input#search(type='text', placeholder='Search')
+    #databody
+      for item in data.items
+        a.data.body(href=item.path.replace('/media/var', ''), data-name=item.name, data-star=item.star.length, data-note=item.note.length, data-date=item.date)
+          .each.name()= item.name
+          .each.star()= item.star.length
+          .each.note()= item.note.length
+          .each.date()= _.date(item.date).fromNow()
+    .data.foot
+      .each total #{data.items.length}
 
+  else
+    .data.head
+      .each= data.info.name
+    if data.info.type.match(/^video/)
+      .data.body: .each: video(src='#{req.url}?stream=yes', controls)
+
+    if data.info.type.match(/^audio/)
+      .data.body: .each: audio(src='#{req.url}?stream=yes', controls)
+
+    if data.info.meta[0]
+      .data.meta
+        if data.info.meta[0].picture
+          .each: img.jacket(src='#{req.url}?jacket=yes')
+        .each
+          p= data.info.meta[0].title
+          p= data.info.meta[0].album
+          p= data.info.meta[0].artist
+          p= data.info.meta[0].albumartist
+
+    .data.body
+      .each= data.info.name
+
+    .data.body
+      .each.center= data.info.type
+      .each.center= parseInt(data.info.size / 1024 / 1024) + ' MB'
+      .each.center= _.date(data.info.date).fromNow()
+
+    .data.foot
+      a.each(href='http://dev.geta6.net#{req.url}?stream=yes') Download

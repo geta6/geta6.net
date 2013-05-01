@@ -26,6 +26,9 @@ location(p, t, r, b, l)
   border-radius 3px
   background-color rgba(0,0,0,.84)
 
+#temp
+  display none
+
 #auth
   .container
     width 300px
@@ -68,12 +71,19 @@ location(p, t, r, b, l)
   text-shadow #FFFFFF 0px 1px 0px
   .container
     margin-bottom 0
+  .list
+    display table
   li
+    display table-cell
+    // &.title
+    //   width 45px
+    &.version
+      width 35px
     height 50px
     &.split
       height 49px
 
-#stat
+#stat a
   margin-top 4px
   padding 0 10px
   height 40px !important
