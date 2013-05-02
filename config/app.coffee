@@ -6,6 +6,7 @@ mongoose = require 'mongoose'
 passport = require 'passport'
 connect =
   store: (require 'connect-mongo') express
+  redis: (require 'connect-redis') express
   stream: (require 'connect-stream')
   assets: (require 'connect-assets')
     buildDir: 'public'
