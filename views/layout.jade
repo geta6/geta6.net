@@ -37,14 +37,16 @@ html
         .container
           ul.list
             if req.isAuthenticated()
-              li.icon: a(href='#'): .icon.prev
-              li.icon: a(href='#'): .icon.play
-              li.icon: a(href='#'): .icon.next
+              li.icon: a(href='javascript:void(0)')#mediaprev: .icon.prev
+              li.icon: a(href='javascript:void(0)')#mediaplay: .icon.play
+              li.icon: a(href='javascript:void(0)')#medianext: .icon.next
             li
               a#stat(href='javascript:void(0)')
-                audio
-                video
-                .status: span welcome to vide #{req.app.get('version')}
+                audio#audio
+                video#video
+                .status geta6.net v#{req.app.get('version')}
+                .status-sub
+                .status-bar
             if req.isAuthenticated()
               li.icon: a(href='#').tips
                 .icon.user
@@ -85,7 +87,7 @@ html
       #foot
         .container
           ul.list.docs
-            li: a(href='http://status.geta6.net') Status
+            li: a(href='http://status.geta6.net', target='_blank') Status
             if req.isAuthenticated()
               li: a(href='#') Help
               li: a(href='#') Query

@@ -29,12 +29,6 @@ location(p, t, r, b, l)
   border-radius 3px
   background-color rgba(0,0,0,.84)
 
-#temp
-  display none
-
-#warn
-  display none
-
 #info
   display none
   .container
@@ -77,10 +71,9 @@ location(p, t, r, b, l)
 
 #stat
   position relative
-  margin-top 4px
+  margin-top 2px
   padding 0
-  height 40px !important
-  line-height 40px
+  height 45px !important
   border 1px solid #CACACA
   border-radius 3px
   background linear-gradient(top, #F1F8FF, #C9D2DE)
@@ -90,7 +83,25 @@ location(p, t, r, b, l)
     top 0
     left 0
     right 0
-    bottom 0
+    height 15px
+    line-height 20px
+  .status-sub
+    position absolute
+    top 14px
+    left 0
+    right 0
+    height 20px
+    line-height 20px
+  .status-bar
+    display none
+    position absolute
+    top 35px
+    left 10px
+    right 10px
+    height 5px
+    background url('/img/load.gif')
+    border 1px solid #B3B6B7
+    border-radius 2px
   video
     display none
   audio

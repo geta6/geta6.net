@@ -1,8 +1,6 @@
-console.log window.status
-
 class Vide
 
-  _scriptVersion = '2.2.1'
+  _scriptVersion = '2.2.2'
   _scriptEnvMode = 'development'
   _currentlyLoad = no
   _timeoutSearch = null
@@ -16,6 +14,8 @@ class Vide
   $info: null
   $navi: null
   $data: null
+  $audio: null
+  $video: null
 
   echo: ->
     if _scriptEnvMode is 'development'
@@ -29,6 +29,8 @@ class Vide
     @$info = ($ '#info')
     @$navi = ($ '#navi')
     @$data = ($ '#data')
+    @$audio = ($ '#audio')
+    @$video = ($ '#video')
 
     if @isAuthenticated()
       # pushState
@@ -52,6 +54,28 @@ class Vide
         return no unless event.state
         @echo 'popState'
         @historyHandler()
+
+      # audioPlay
+      ($ '#mediaplay').on 'click', =>
+        if @$audio.get(0).paused
+          if (@$audio.attr 'src').length
+            @$audio.get(0).play()
+        else
+          @$audio.get(0).pause()
+
+      @$audio.on 'loadstart', (event) =>
+        if @$audio.get(0).paused
+          @setStatus null, null, 0
+
+      @$audio.on 'canplay', (event) =>
+        @setStatus null, null, @$audio.get(0).duration
+        @$audio.get(0).play()
+
+      @$audio.on 'play', (event) =>
+        ($ '#mediaplay').find('.icon').removeClass('play').addClass('stop')
+
+      @$audio.on 'pause', (event) =>
+        ($ '#mediaplay').find('.icon').removeClass('stop').addClass('play')
 
       # init
       @versionCheck()
@@ -160,33 +184,43 @@ class Vide
       @echo 'autoDirUp:', 'hide'
 
   mediaHandler: ->
-    if (__audio = ($ '#audio')).size()
+    if (__audio = ($ '#dataaudio')).size()
       __audio.attr 'data-src'
       @setMedia 'audio', __audio.attr('data-src'), __audio.attr('data-name')
       @echo 'mediaHandler:', 'audio'
-    if (__video = ($ '#video')).size()
+    if (__video = ($ '#datavideo')).size()
       __video.attr 'data-src'
       @setMedia 'video', __video.attr('data-src'), __video.attr('data-name')
       @echo 'mediaHandler:', 'video'
+
+  setStatus: (main = null, sub = null, bar = 0) ->
+    if main
+      @$stat.find('.status').text main
+    if sub
+      @$stat.find('.status-sub').text sub
+    if 0 < bar
+      @$stat.find('.status-bar').hide()
+    else
+      @$stat.find('.status-bar').show()
+    @statusMarquee()
 
   setMedia: (type, src, name) ->
     @echo 'setMedia:', type, decodeURI src
     switch type
       when 'status'
-        @$stat.find('.status span').text src
+        @$stat.find('.status').text src
+        @statusMarquee()
+      when 'substatus'
+        @$stat.find('.status-sub').text src
         @statusMarquee()
       when 'audio'
-        __audio = @$stat.find('audio')
-        __currentPlay = __audio.attr 'src'
-        if __currentPlay isnt src
-          __audio.attr 'src', src
+        (@$audio.attr 'src', src) if (@$audio.attr 'src') isnt src
         @$stat.attr 'href', location.pathname
-        @setMedia 'status', ($ '#audio').attr('data-name')
-        __audio.get(0).play()
+        @setStatus (($ '#dataaudio').attr 'data-status'), (($ '#dataaudio').attr 'data-substatus'), 1
 
   statusMarquee: ->
     @echo 'statusMarquee:'
-    __marquee = @$stat.find('.status span')
+    __marquee = @$stat.find('.status')
 
   historyHandler: ->
     unless _currentlyLoad
@@ -206,7 +240,6 @@ class Vide
             data: order: _dataSortOrder
             complete: (res) =>
               @$load.fadeOut 60, =>
-                @echo res.status
                 if res.status is 0
                   @flashError 'Could not connect to the server.'
                 else
@@ -229,15 +262,15 @@ class Vide
       _dataSortOrder.asc = if _dataSortOrder.by is 'name' then !_dataSortOrder.asc else yes
       _dataSortOrder.by = 'name'
     if $target.hasClass 'star'
-      _dataSortOrder.asc = if _dataSortOrder.by is 'star' then !_dataSortOrder.asc else yes
+      _dataSortOrder.asc = if _dataSortOrder.by is 'star' then !_dataSortOrder.asc else no
       _dataSortOrder.by = 'star'
       __parseToInt = yes
     if $target.hasClass 'note'
-      _dataSortOrder.asc = if _dataSortOrder.by is 'note' then !_dataSortOrder.asc else yes
+      _dataSortOrder.asc = if _dataSortOrder.by is 'note' then !_dataSortOrder.asc else no
       _dataSortOrder.by = 'note'
       __parseToInt = yes
     if $target.hasClass 'date'
-      _dataSortOrder.asc = if _dataSortOrder.by is 'date' then !_dataSortOrder.asc else yes
+      _dataSortOrder.asc = if _dataSortOrder.by is 'date' then !_dataSortOrder.asc else no
       _dataSortOrder.by = 'date'
       __parseToInt = yes
 
