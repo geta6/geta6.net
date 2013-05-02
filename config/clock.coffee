@@ -70,7 +70,7 @@ module.exports = (app, id, callback) ->
             item.size = stat.size
             item.date = stat.mtime
             updating.push item.path
-          console.log 'ClockWorks:', 'process', file
+          #console.log 'ClockWorks:', 'process', file
           return item.save next
       , (err) ->
         fall()

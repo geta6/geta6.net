@@ -1,58 +1,99 @@
-if data && data.info
-  if data.info.type == 'text/directory'
-    .data.head
-      - var order = req.query.order?req.query.order:{by: 'date', asc: 'false'};
-      a.each.orderby.name(class=order.by=='name'?(order.asc=='true'?'sort-asc':'sort-dsc'):'', href='javascript:void(0)') name
-      a.each.orderby.star(class=order.by=='star'?(order.asc=='true'?'sort-asc':'sort-dsc'):'', href='javascript:void(0)'): .icon.star
-      a.each.orderby.logs(class=order.by=='logs'?(order.asc=='true'?'sort-asc':'sort-dsc'):'', href='javascript:void(0)'): .icon.logs
-      a.each.orderby.date(class=order.by=='date'?(order.asc=='true'?'sort-asc':'sort-dsc'):'', href='javascript:void(0)'): .icon.date
+if req.isAuthenticated()
+  if data && data.info
+    if data.info.type == 'text/directory'
+      .data.head
+        - var order = req.query.order?req.query.order:{by: 'date', asc: 'false'};
+        a.each.orderby.name(class=order.by=='name'?(order.asc=='true'?'sort-asc':'sort-dsc'):'', href='javascript:void(0)') name
+        a.each.orderby.star(class=order.by=='star'?(order.asc=='true'?'sort-asc':'sort-dsc'):'', href='javascript:void(0)'): .icon.star
+        a.each.orderby.logs(class=order.by=='logs'?(order.asc=='true'?'sort-asc':'sort-dsc'):'', href='javascript:void(0)'): .icon.logs
+        a.each.orderby.date(class=order.by=='date'?(order.asc=='true'?'sort-asc':'sort-dsc'):'', href='javascript:void(0)'): .icon.date
 
-    .data.form
-      .each.field: input#search(type='text', placeholder='Search')
+      .data.form
+        .each.field: input#search(type='text', placeholder='Search')
 
-    #databody
-      for item in data.items
-        a.data.body(href=item.path.replace('/media/var', ''), data-name=item.name, data-star=item.star.length, data-note=item.note.length, data-date=item.date)
-          .each.name
-            if item.type == 'text/directory'
-              .icon.dirs
-            else if item.type.match(/^audio/)
-              .icon.file-mp3
-            else if item.type.match(/^video/)
-              .icon.file-mp4
-            else if item.type.match(/pdf/)
-              .icon.file-pdf
-            else
-              .cion.file
-            span= item.name
-          .each.star= item.star.length
-          .each.note= item.note.length
-          .each.date= _.date(item.date).fromNow()
+      #databody
+        for item in data.items
+          a.data.body(href=item.path.replace('/media/var', ''), data-name=item.name, data-star=item.star.length, data-note=item.note.length, data-date=item.date)
+            .each.name
+              if item.type == 'text/directory'
+                .icon.dirs
+              else if item.type.match(/^audio/)
+                .icon.file-mp3
+              else if item.type.match(/^video/)
+                .icon.file-mp4
+              else if item.type.match(/pdf/)
+                .icon.file-pdf
+              else
+                .cion.file
+              span= item.name
+            .each.star= item.star.length
+            .each.note= item.note.length
+            .each.date= _.date(item.date).fromNow()
 
-    .data.foot
-      .each total #{data.items.length}
-      .each.star: .icon.star
+      .data.foot
+        .each total #{data.items.length}
+        .each.star: .icon.star
+
+    else
+      .data.head
+        .each
+          span= data.info.name
+          span.pull-right= _.date(data.info.date).fromNow()
+
+      - var datasize = parseInt(data.info.size / 1024 / 102.4) / 10
+
+      if data.info.type.match(/^video/)
+        .data.body: .each
+          video(src='#{req.url}?stream=yes', controls)
+
+      else if data.info.type.match(/^audio/)
+        - var dataname = data.info.name.replace(/^[0-9\-]+ (.+?)\.[0-9a-z]+$/, '$1')
+        #audio(data-name=dataname, data-src='#{data.info._id}')
+
+        .data.body
+          .each.label Artist
+          .each= data.info.path.split('/')[4]
+        .data.body
+          .each.label Album
+          .each= data.info.path.split('/')[5]
+        .data.body
+          .each.label Title
+          .each= dataname
+
+      else
+        .data.body
+          .each.label Path
+          .each= data.info.path.replace('/media/var', '')
+
+      .data.body
+        .each.label MIME
+        .each= data.info.type
+      .data.body
+        .each.label Size
+        .each= datasize + ' MB'
+      .data.body
+        .each.label Updated
+        .each= _.date(data.info.date).format('YYYY/MM/DD HH:mm:ss')
+      //- .data.body
+      //-   .each.label DataID
+      //-   .each= data.info._id
+
+      .data.foot
+        a.each.center.noajax(href='/#{data.info._id}')
+          span Download (#{datasize} MB)
+        a.each.center(href="afp://geta6.net/media#{data.info.path.replace('/media/var', '')}") Open with AFP
 
   else
+    .data.force-first
+      .each Aw, Snap.
+
+else
+  form(action='/login', method='POST')
     .data.head
-      .each= data.info.name
-
-    if data.info.type.match(/^video/)
-      .data.body: .each
-        video(src='#{req.url}?stream=yes', controls)
-
-    if data.info.type.match(/^audio/)
-      .data.body: .each
-        audio(src='#{req.url}?stream=yes', controls)
-        #audio(data-name=data.info.name, data-src='#{req.url}?stream=yes')
-
-    .data.body
-      .each= data.info.name
-
-    .data.body
-      .each.center= data.info.type
-      .each.center= parseInt(data.info.size / 1024 / 1024) + ' MB'
-      .each.center= _.date(data.info.date).fromNow()
-
-    .data.foot
-      a.each(href='http://dev.geta6.net#{req.url}?stream=yes') Download
+      .each Sign in
+    .data.form
+      .each.field: input(type='text', name='username', placeholder='Username')
+    .data.form
+      .each.field: input(type='password', name='password', placeholder='Password')
+    .data.form
+      .each.field: input(type='submit', value='Sign in')

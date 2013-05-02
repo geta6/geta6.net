@@ -75,8 +75,15 @@ location(p, t, r, b, l)
       padding 0 10px
       overflow ellipsis
       vertical-align top
+      &.label
+        max-width 100px
+        width 20%
+        font-weight bold
+        border-right 1px solid #E5E5E5
       &.center
         text-align center
+      &.right
+        text-align right
       &.name
         width 60%
       &.date
@@ -109,6 +116,8 @@ location(p, t, r, b, l)
       border-left 1px solid #CACACA
       border-right 1px solid #CACACA
       border-bottom 1px solid #E5E5E5
+      &.force-first
+        border-top 1px solid #CACACA
       &:last-child
         border-bottom 1px solid #CACACA
       &:hover
@@ -132,6 +141,14 @@ location(p, t, r, b, l)
             margin-right 5px
             width 24px
             height 24px
+          dd, dt
+            display inline-block
+          dd
+            font-weight bold
+            &:after
+              content ':'
+              padding-right 5px
+
       &.head, &.foot
         font-weight bold
         background linear-gradient(top, #FAFAFA, #EAEAEA)

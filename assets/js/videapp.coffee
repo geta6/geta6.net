@@ -1,3 +1,5 @@
+console.log window.status
+
 class Vide
 
   _scriptVersion = '2.2.0'
@@ -36,9 +38,10 @@ class Vide
           $target = ($ event.target).parents 'a'
         __nextpath = $target.attr 'href'
         return yes unless history.pushState?
-        return yes if /^https*:\/\//.test __nextpath
+        return yes if /^[a-z]+:\/\//.test __nextpath
         return yes if /^javascript/.test __nextpath
         return yes if /^#/.test __nextpath
+        return yes if $target.hasClass 'noajax'
         event.preventDefault()
         @echo 'pushState:', __nextpath
         history.pushState _dataSortOrder, '', __nextpath
@@ -55,6 +58,7 @@ class Vide
       @envModeCheck()
       @autosetDirUp()
       @mediaHandler()
+      @headersCheck()
 
     else
       @$stat.text "authentication required"
@@ -77,6 +81,18 @@ class Vide
       @flashError "javascript v#{_scriptVersion} deprecated (v#{__currentVersion})"
     @echo 'versionCheck:', _scriptVersion
 
+  headersCheck: ->
+    $.ajax location.pathname,
+      type: 'HEAD'
+      complete: (res) =>
+        @flashError 404 if res.status is 404
+
+  getSlicepath: (min = 1) ->
+    __sliced = location.pathname.split '/'
+    if min < __sliced.length
+      return __sliced
+    return null
+
   escapeRegExp: (string) ->
     return string
       .replace(/\*/g, '\\*')
@@ -96,6 +112,10 @@ class Vide
       .replace(/\//g, '\\/')
 
   flashError: (string) ->
+    if string is 404
+      string = 'Document Not Found.'
+    if string is 401
+      string = 'Authentication Required.'
     @echo 'flashError', string
     @$info.find('p').text(string)
     @$info.slideDown 120
@@ -117,12 +137,6 @@ class Vide
             $data.hide()
       _preSearchText = __string
     , 480
-
-  getSlicepath: (min = 1) ->
-    __sliced = location.pathname.split '/'
-    if min < __sliced.length
-      return __sliced
-    return null
 
   reselectNavigation: ->
     __slicepath = @getSlicepath()
@@ -163,7 +177,10 @@ class Vide
         @statusMarquee()
       when 'audio'
         __audio = @$stat.find('audio')
-        __audio.attr 'src', src
+        __currentPlay = __audio.attr 'src'
+        if __currentPlay isnt src
+          __audio.attr 'src', src
+        @$stat.attr 'href', location.pathname
         @setMedia 'status', ($ '#audio').attr('data-name')
         __audio.get(0).play()
 
@@ -189,14 +206,19 @@ class Vide
             data: order: _dataSortOrder
             complete: (res) =>
               @$load.fadeOut 60, =>
+                @echo res.status
                 if res.status is 0
                   @flashError 'Could not connect to the server.'
                 else
+                  if res.status is 404
+                    @flashError 404
+                  if res.status is 401
+                    @flashError 401
                   @$data.html res.responseText
                   @$load.fadeOut 60, =>
                     @mediaHandler()
                     @$data.slideDown 120
-                    _currentlyLoad = no
+                _currentlyLoad = no
 
   dataSort: ($target) ->
     ($ '.orderby').removeClass('sort-asc sort-dsc')

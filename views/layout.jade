@@ -32,15 +32,6 @@ html
 
     #load Loading...
 
-    #temp
-
-    block info
-      #info(style='display:#{err?'block':'none'}')
-        .container
-          .info.warn
-            p.pull-left= err
-            a.icon.shut.pull-right(href='javascript:void(0)')
-
     block head
       #head
         .container
@@ -50,7 +41,7 @@ html
               li.icon: a(href='#'): .icon.play
               li.icon: a(href='#'): .icon.next
             li
-              a#stat(href='#')
+              a#stat(href='javascript:void(0)')
                 audio
                 video
                 .status: span welcome to vide #{req.app.get('version')}
@@ -63,17 +54,25 @@ html
               //-   .tips Settings
 
     block navi
-      #navi
+      if req.isAuthenticated()
+        #navi
+          .container
+            ul.list.navi
+              - var href = req.url.split('/')
+              - var addr = href[1]
+              li#dirup.icons(style=3>href.length?'opacity:0;width:0':''): a(href='javascript:void(0)'): .icon.over
+              li(class=addr=='Apps'?'selected':''): a(href='/Apps') Apps
+              li(class=addr=='Books'?'selected':''): a(href='/Books') Books
+              li(class=addr=='Games'?'selected':''): a(href='/Games') Games
+              li(class=addr=='Movies'?'selected':''): a(href='/Movies') Movies
+              li(class=addr=='Music'?'selected':''): a(href='/Music') Music
+
+    block info
+      #info
         .container
-          ul.list.navi
-            - var href = req.url.split('/')
-            - var addr = href[1]
-            li#dirup.icons(style=3>href.length?'opacity:0;width:0':''): a(href='javascript:void(0)'): .icon.over
-            li(class=addr=='Apps'?'selected':''): a(href='/Apps') Apps
-            li(class=addr=='Books'?'selected':''): a(href='/Books') Books
-            li(class=addr=='Games'?'selected':''): a(href='/Games') Games
-            li(class=addr=='Movies'?'selected':''): a(href='/Movies') Movies
-            li(class=addr=='Music'?'selected':''): a(href='/Music') Music
+          .info.warn
+            p.pull-left
+            a.icon.shut.pull-right(href='javascript:void(0)')
 
     block body
       #body
