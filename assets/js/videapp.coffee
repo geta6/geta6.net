@@ -2,7 +2,7 @@ console.log window.status
 
 class Vide
 
-  _scriptVersion = '2.2.0'
+  _scriptVersion = '2.2.1'
   _scriptEnvMode = 'development'
   _currentlyLoad = no
   _timeoutSearch = null
