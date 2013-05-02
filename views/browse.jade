@@ -44,7 +44,7 @@ if req.isAuthenticated()
 
       if data.info.type.match(/^video/)
         .data.body: .each
-          video(src='#{req.url}?stream=yes', controls)
+          video(src='/#{data.info._id}', controls, autoplay)
 
       else if data.info.type.match(/^audio/)
         - var dataname = data.info.name.replace(/^[0-9\-]+ (.+?)\.[0-9a-z]+$/, '$1')
@@ -97,3 +97,5 @@ else
       .each.field: input(type='password', name='password', placeholder='Password')
     .data.form
       .each.field: input(type='submit', value='Sign in')
+    .data.body
+      .each ログインできない時はブラウザをリセットしてください

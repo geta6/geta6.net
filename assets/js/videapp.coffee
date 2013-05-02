@@ -229,15 +229,15 @@ class Vide
       _dataSortOrder.asc = if _dataSortOrder.by is 'name' then !_dataSortOrder.asc else yes
       _dataSortOrder.by = 'name'
     if $target.hasClass 'star'
-      _dataSortOrder.asc = if _dataSortOrder.by is 'star' then !_dataSortOrder.asc else yes
+      _dataSortOrder.asc = if _dataSortOrder.by is 'star' then !_dataSortOrder.asc else no
       _dataSortOrder.by = 'star'
       __parseToInt = yes
     if $target.hasClass 'note'
-      _dataSortOrder.asc = if _dataSortOrder.by is 'note' then !_dataSortOrder.asc else yes
+      _dataSortOrder.asc = if _dataSortOrder.by is 'note' then !_dataSortOrder.asc else no
       _dataSortOrder.by = 'note'
       __parseToInt = yes
     if $target.hasClass 'date'
-      _dataSortOrder.asc = if _dataSortOrder.by is 'date' then !_dataSortOrder.asc else yes
+      _dataSortOrder.asc = if _dataSortOrder.by is 'date' then !_dataSortOrder.asc else no
       _dataSortOrder.by = 'date'
       __parseToInt = yes
 

@@ -6,6 +6,7 @@ mongoose = require 'mongoose'
 passport = require 'passport'
 connect =
   store: (require 'connect-mongo') express
+  redis: (require 'connect-redis') express
   stream: (require 'connect-stream')
   assets: (require 'connect-assets')
     buildDir: 'public'
@@ -54,7 +55,7 @@ if (app.get 'env') is 'development'
 
 # Session
 passport.serializeUser (user, done) ->
-  done null, user
+  done null, user._id
 
 passport.deserializeUser (id, done) ->
   done null, id
@@ -73,7 +74,7 @@ passport.use new Strategy (username, password, done) ->
           return done null, username
       if success is 0
         return done null, no
-      return done null, username
+      return done null, { _id: username }
 
 # Exports
 exports = module.exports = app
