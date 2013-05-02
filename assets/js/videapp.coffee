@@ -1,6 +1,6 @@
 class Vide
 
-  _scriptVersion = 2.2
+  _scriptVersion = '2.2.0'
   _scriptEnvMode = 'development'
   _currentlyLoad = no
   _timeoutSearch = null
@@ -69,8 +69,11 @@ class Vide
     @echo 'envModeChek:', _scriptEnvMode
 
   versionCheck: ->
-    __currentVersion = parseFloat ($ 'meta[name=version]').attr 'content'
-    if _scriptVersion < __currentVersion
+    __versionToInt = (version) ->
+      return parseInt (version.replace '.', ''), 10
+    __currentVersion = ($ 'meta[name=version]').attr 'content'
+    __scriptVersion = __versionToInt _scriptVersion
+    if (__versionToInt _scriptVersion) < (__versionToInt __currentVersion)
       @flashError "javascript v#{_scriptVersion} deprecated (v#{__currentVersion})"
     @echo 'versionCheck:', _scriptVersion
 
