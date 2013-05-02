@@ -6,36 +6,45 @@ if data && data.info
       a.each.orderby.star(class=order.by=='star'?(order.asc=='true'?'sort-asc':'sort-dsc'):'', href='javascript:void(0)'): .icon.star
       a.each.orderby.logs(class=order.by=='logs'?(order.asc=='true'?'sort-asc':'sort-dsc'):'', href='javascript:void(0)'): .icon.logs
       a.each.orderby.date(class=order.by=='date'?(order.asc=='true'?'sort-asc':'sort-dsc'):'', href='javascript:void(0)'): .icon.date
+
     .data.form
       .each.field: input#search(type='text', placeholder='Search')
+
     #databody
       for item in data.items
         a.data.body(href=item.path.replace('/media/var', ''), data-name=item.name, data-star=item.star.length, data-note=item.note.length, data-date=item.date)
-          .each.name()= item.name
-          .each.star()= item.star.length
-          .each.note()= item.note.length
-          .each.date()= _.date(item.date).fromNow()
+          .each.name
+            if item.type == 'text/directory'
+              .icon.dirs
+            else if item.type.match(/^audio/)
+              .icon.file-mp3
+            else if item.type.match(/^video/)
+              .icon.file-mp4
+            else if item.type.match(/pdf/)
+              .icon.file-pdf
+            else
+              .cion.file
+            span= item.name
+          .each.star= item.star.length
+          .each.note= item.note.length
+          .each.date= _.date(item.date).fromNow()
+
     .data.foot
       .each total #{data.items.length}
+      .each.star: .icon.star
 
   else
     .data.head
       .each= data.info.name
+
     if data.info.type.match(/^video/)
-      .data.body: .each: video(src='#{req.url}?stream=yes', controls)
+      .data.body: .each
+        video(src='#{req.url}?stream=yes', controls)
 
     if data.info.type.match(/^audio/)
-      .data.body: .each: audio(src='#{req.url}?stream=yes', controls)
-
-    if data.info.meta[0]
-      .data.meta
-        if data.info.meta[0].picture
-          .each: img.jacket(src='#{req.url}?jacket=yes')
-        .each
-          p= data.info.meta[0].title
-          p= data.info.meta[0].album
-          p= data.info.meta[0].artist
-          p= data.info.meta[0].albumartist
+      .data.body: .each
+        audio(src='#{req.url}?stream=yes', controls)
+        #audio(data-name=data.info.name, data-src='#{req.url}?stream=yes')
 
     .data.body
       .each= data.info.name

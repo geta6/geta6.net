@@ -125,6 +125,13 @@ location(p, t, r, b, l)
           height h = 24px
           margin-top -(w/2)px
           margin-left -(h/2)px
+      &.body
+        .each
+          position relative
+          .icon
+            margin-right 5px
+            width 24px
+            height 24px
       &.head, &.foot
         font-weight bold
         background linear-gradient(top, #FAFAFA, #EAEAEA)
@@ -215,12 +222,26 @@ location(p, t, r, b, l)
     background-image url('/img/icon/conf.png')
   &.shut
     background-image url('/img/icon/shut.png')
-  &.back
-    background-image url('/img/icon/back.png')
+  &.prev
+    background-image url('/img/icon/prev.png')
   &.next
     background-image url('/img/icon/next.png')
+  &.play
+    background-image url('/img/icon/play.png')
+  &.stop
+    background-image url('/img/icon/stop.png')
   &.over
     background-image url('/img/icon/over.png')
+  &.dirs
+    background-image url('/img/icon/dirs.png')
+  &.file
+    background-image url('/img/icon/file.png')
+  &.file-mp3
+    background-image url('/img/icon/file.mp3.png')
+  &.file-mp4
+    background-image url('/img/icon/file.mp4.png')
+  &.file-pdf
+    background-image url('/img/icon/file.pdf.png')
 
 .jacket
   width 100%
@@ -228,10 +249,13 @@ location(p, t, r, b, l)
 @media screen and (max-device-width:320px)
   .head
     .icon
-      width 16px !important
-      height 16px !important
+      // width 16px !important
+      // height 16px !important
       margin-top -8px !important
       margin-left -8px !important
   .each
+    .icon
+      width 16px !important
+      height 16px !important
     &:after
       width 10px !important

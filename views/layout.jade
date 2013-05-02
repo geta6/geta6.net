@@ -2,6 +2,10 @@
 html
   head
     meta(charset='utf-8')
+    if req.isAuthenticated()
+      meta(name='ensure', content='')
+      meta(name='environment', content=req.app.get('env'))
+    meta(name='version', content=req.app.get('version'))
     meta(name='viewport', content='initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no')
     meta(name='format-detection', content='telephone=no')
     meta(name='apple-mobile-web-app-capable', content='yes')
@@ -21,10 +25,10 @@ html
     link(rel='apple-touch-startup-image', href='/img/app/apple-touch-startup-image-1496x2048.png', media='(device-width:768px) and (device-height:1024px) and (-webkit-device-pixel-ratio:2) and (orientation:landscape)')
 
     != css('master')
-    != css('common')
-    != css('unique')
 
   body
+
+    a#null(href='javascript:void(0)')
 
     #load Loading...
 
@@ -41,16 +45,22 @@ html
       #head
         .container
           ul.list
-            li.title: a(href='/') Strat
-            li.version 2.1.2
             if req.isAuthenticated()
-              li#stat: a(href='#') nowplaying
+              li.icon: a(href='#'): .icon.prev
+              li.icon: a(href='#'): .icon.play
+              li.icon: a(href='#'): .icon.next
+            li
+              a#stat(href='#')
+                audio
+                video
+                .status: span welcome to #{req.app.get('version')}
+            if req.isAuthenticated()
               li.icon: a(href='#').tips
                 .icon.user
                 .tips= req.user
-              li.icon: a(href='#').tips
-                .icon.conf
-                .tips Settings
+              //- li.icon: a(href='#').tips
+              //-   .icon.conf
+              //-   .tips Settings
 
     block navi
       #navi
@@ -58,7 +68,7 @@ html
           ul.list.navi
             - var href = req.url.split('/')
             - var addr = href[1]
-            li.icons(style=3>href.length?'opacity:0;width:0':''): a(href='javascript:dirup()'): .icon.over
+            li#dirup.icons(style=3>href.length?'opacity:0;width:0':''): a(href='javascript:void(0)'): .icon.over
             li(class=addr=='Apps'?'selected':''): a(href='/Apps') Apps
             li(class=addr=='Books'?'selected':''): a(href='/Books') Books
             li(class=addr=='Games'?'selected':''): a(href='/Games') Games
@@ -87,6 +97,3 @@ html
     script(src='/lib/underscore.min.js')
     script(src='/lib/underscore.string.min.js')
     !=js('master')
-    !=js('search')
-    !=js('sortfield')
-    !=js('pushstate')

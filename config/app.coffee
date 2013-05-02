@@ -24,6 +24,7 @@ app = express()
 app.disable 'x-powered-by'
 app.set 'env', process.env.NODE_ENV || 'development'
 app.set 'port', process.env.PORT || 3050
+app.set 'version', require(path.resolve 'package').version
 app.set 'models', require.all path.resolve 'models'
 app.set 'helper', require.all path.resolve 'helper'
 app.set 'views', path.resolve 'views'

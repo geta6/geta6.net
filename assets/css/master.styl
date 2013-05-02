@@ -2,6 +2,16 @@
 
 global-reset()
 
+location(p, t, r, b, l)
+  position p
+  top t
+  left l
+  right r
+  bottom b
+
+
+// Master
+
 *
   box-sizing border-box
 
@@ -60,3 +70,7 @@ input
     height 36px
   &[type=button], &[type=submit]
     @extend button
+
+
+@import 'common'
+@import 'unique'
