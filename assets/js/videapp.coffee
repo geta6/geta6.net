@@ -69,8 +69,7 @@ class Vide
           @setStatus null, null, 0
 
       @$audio.on 'canplay', (event) =>
-        @setStatus null, null, 1
-        _mediaDuration = @$audio.get(0).duration
+        _mediaDuration = @getTimeFormat @$audio.get(0).duration
         @$audio.get(0).play()
 
       @$audio.on 'play', (event) =>
@@ -115,6 +114,12 @@ class Vide
       type: 'HEAD'
       complete: (res) =>
         @flashError 404 if res.status is 404
+
+  getTimeFormat: (sec = 0) ->
+    __min = parseInt sec / 60, 10
+    __sec = parseInt sec - 60 * __min, 10
+    __sec = "0#{__sec}" if 2 > (String __sec).length
+    return "#{__min}:#{__sec}"
 
   getSlicepath: (min = 1) ->
     __sliced = location.pathname.split '/'
@@ -206,15 +211,11 @@ class Vide
       @$stat.find('.status-sub').text sub
       @statusMarquee()
     if 0 < bar
-      __time = @$audio.get(0).currentTime
-      __min = parseInt bar / 60, 10
-      __sec = parseInt bar - 60 * __min, 10
-      __sec = "0#{__sec}" if 2 > (String __sec).length
       @$stat.find('.status-bar').hide()
-      @$stat.find('.status-min').show().text "#{__min}:#{__sec}"
-      console.log "#{__min}:#{__sec} - #{_mediaDuration}"
+      @$stat.find('.status-min').show().text "#{@getTimeFormat bar} - #{_mediaDuration}"
     else
       @$stat.find('.status-bar').show()
+      @$stat.find('.status-min').hide()
 
   setMedia: (type, src, name) ->
     @echo 'setMedia:', type, decodeURI src
