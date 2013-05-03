@@ -5,6 +5,7 @@ class Vide
   _currentlyLoad = no
   _timeoutSearch = null
   _preSearchText = null
+  _mediaDuration = '0:00'
   _dataSortOrder =
     by: 'date'
     asc: no
@@ -68,7 +69,8 @@ class Vide
           @setStatus null, null, 0
 
       @$audio.on 'canplay', (event) =>
-        @setStatus null, null, @$audio.get(0).duration
+        @setStatus null, null, 1
+        _mediaDuration = @$audio.get(0).duration
         @$audio.get(0).play()
 
       @$audio.on 'play', (event) =>
@@ -76,6 +78,9 @@ class Vide
 
       @$audio.on 'pause', (event) =>
         ($ '#mediaplay').find('.icon').removeClass('stop').addClass('play')
+
+      @$audio.on 'timeupdate', (event) =>
+        @setStatus null, null, @$audio.get(0).currentTime
 
       # init
       @versionCheck()
@@ -196,13 +201,20 @@ class Vide
   setStatus: (main = null, sub = null, bar = 0) ->
     if main
       @$stat.find('.status').text main
+      @statusMarquee()
     if sub
       @$stat.find('.status-sub').text sub
+      @statusMarquee()
     if 0 < bar
+      __time = @$audio.get(0).currentTime
+      __min = parseInt bar / 60, 10
+      __sec = parseInt bar - 60 * __min, 10
+      __sec = "0#{__sec}" if 2 > (String __sec).length
       @$stat.find('.status-bar').hide()
+      @$stat.find('.status-min').show().text "#{__min}:#{__sec}"
+      console.log "#{__min}:#{__sec} - #{_mediaDuration}"
     else
       @$stat.find('.status-bar').show()
-    @statusMarquee()
 
   setMedia: (type, src, name) ->
     @echo 'setMedia:', type, decodeURI src

@@ -45,6 +45,7 @@ module.exports = (app) ->
   # Main
   app.all '*', (req, res, next) ->
     req.url = (req.url.substr 0, req.url.length - 1) if _.str.endsWith req.url, '/'
+    req.url = if req.url.length is 0 then '/' else req.url
     datares = { req: req, data: {} }
     address = "/media/var#{decodeURI req.url}"
     pattern = new RegExp "^#{app.get('helper').escape 'regex', address}"
@@ -52,9 +53,15 @@ module.exports = (app) ->
     # Stream process
     async.series [
       (next) ->
+        unless req.isAuthenticated()
+          return next 401
+        return next null
+
+      (next) ->
         Item.findOne path: address, {}, {}, (err, info) ->
           console.error 'ItemSchema:', err if err
           datares.data.info = info
+          return next 'index' if req.url is '/'
           return next 404 unless info
           return next 404 unless info.path
           return next null
@@ -75,6 +82,10 @@ module.exports = (app) ->
     ], (err, info) ->
       if err is 404
         return response req, res, 404, datares
+      if err is 401
+        return response req, res, 401, datares
+      if err is 'index'
+        return response req, res, 200, datares
       return response req, res, 'auto', datares
 
 
