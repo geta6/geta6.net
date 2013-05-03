@@ -1,6 +1,9 @@
 if req.isAuthenticated()
   if data && data.info
+
+
     if data.info.type == 'text/directory'
+      //- Directory
       .data.head
         - var order = req.query.order?req.query.order:{by: 'date', asc: 'false'};
         a.each.orderby.name(class=order.by=='name'?(order.asc=='true'?'sort-asc':'sort-dsc'):'', href='javascript:void(0)') name
@@ -32,13 +35,15 @@ if req.isAuthenticated()
 
       .data.foot
         .each total #{data.items.length}
-        .each.star: .icon.star
+        .each.center= _.date(data.info.date).fromNow()
+
 
     else
+      //- File
       .data.head
-        .each
-          span= data.info.name
-          span.pull-right= _.date(data.info.date).fromNow()
+        .each= data.info.name
+        a.each.note#pushnote(href='javascript:void(0)'): .icon.note
+        a.each.star#pushstar(href='javascript:void(0)'): .icon.star
 
       - var datasize = parseInt(data.info.size / 1024 / 102.4) / 10
 
@@ -50,7 +55,7 @@ if req.isAuthenticated()
         - var dataname = data.info.name.replace(/^[0-9\-]+ (.+?)\.[0-9a-z]+$/, '$1')
         - var dataartist = data.info.path.split('/')[4]
         - var dataalbum = data.info.path.split('/')[5]
-        #dataaudio(data-status=dataname, data-substatus='#{dataartist} - #{dataalbum}', data-src='#{data.info._id}')
+        #dataaudio(data-key=dataname, data-sub='#{dataartist} - #{dataalbum}', data-src='#{data.info._id}')
         .data.body
           .each.label Artist
           .each= dataartist
@@ -73,11 +78,13 @@ if req.isAuthenticated()
         .each.label Size
         .each= datasize + ' MB'
       .data.body
-        .each.label Updated
-        .each= _.date(data.info.date).format('YYYY/MM/DD HH:mm:ss')
-      //- .data.body
-      //-   .each.label DataID
-      //-   .each= data.info._id
+        .each.label Date
+        .each
+          span= _.date(data.info.date).format('YY/MM/DD HH:mm:ss')
+          span= ' - ' + _.date(data.info.date).fromNow()
+      .data.body
+        .each.label ID
+        .each= data.info._id
 
       .data.foot
         a.each.center.noajax(href='/#{data.info._id}')

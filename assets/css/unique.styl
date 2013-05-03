@@ -68,6 +68,34 @@ location(p, t, r, b, l)
     height 50px
     &:not(.icon)
       padding 0 10px
+    &.icon
+      position relative
+
+  .console
+    position absolute
+    top 50%
+    left 50%
+    border 1px solid #DADADA
+    border-radius 3px
+    background linear-gradient(top, #FAFAFA, #EAEAEA)
+    &:hover
+      background linear-gradient(top, #FAFBFD, #DAE4EE)
+    &:active
+      background #DAE4EE
+    .icon
+      position absolute
+      top 50%
+      left 50%
+  #mediaplay, #mediaplay .icon
+    width w = 32px
+    height h = 32px
+    margin-top (-1 * h / 2) px
+    margin-left (-1 * w / 2) px
+  #medianext, #medianext .icon, #mediaprev, #mediaprev .icon
+    width w = 24px
+    height h = 24px
+    margin-top (-1 * h / 2) px
+    margin-left (-1 * w / 2) px
 
 #stat
   position relative
@@ -78,7 +106,7 @@ location(p, t, r, b, l)
   border-radius 3px
   background linear-gradient(top, #F1F8FF, #C9D2DE)
   overflow scroll
-  .status
+  .status-key
     position absolute
     top 0
     left 3px
@@ -152,9 +180,9 @@ location(p, t, r, b, l)
         cursor default
 
 #foot
+  border-top 1px solid #EEEEEE
   .container
     margin-bottom 0
   ul
-    border-top 1px solid #EEEEEE
     height 50px
     line-height 50px

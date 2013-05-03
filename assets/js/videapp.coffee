@@ -1,11 +1,12 @@
 class Vide
 
-  _scriptVersion = '2.2.2'
+  _scriptVersion = '2.2.4'
   _scriptEnvMode = 'development'
   _currentlyLoad = no
   _timeoutSearch = null
   _preSearchText = null
   _mediaDuration = '0:00'
+  _mediaInitPlay = ->
   _dataSortOrder =
     by: 'date'
     asc: no
@@ -14,6 +15,7 @@ class Vide
   $stat: null
   $info: null
   $navi: null
+  $body: null
   $data: null
   $audio: null
   $video: null
@@ -29,10 +31,12 @@ class Vide
     @$stat = ($ '#stat')
     @$info = ($ '#info')
     @$navi = ($ '#navi')
+    @$body = ($ '#body')
     @$data = ($ '#data')
     @$audio = ($ '#audio')
     @$video = ($ '#video')
 
+    @envModeCheck()
     if @isAuthenticated()
       # pushState
       ($ document).on 'click', 'a', (event) =>
@@ -68,22 +72,24 @@ class Vide
         if @$audio.get(0).paused
           @setStatus null, null, 0
 
-      @$audio.on 'canplay', (event) =>
-        _mediaDuration = @getTimeFormat @$audio.get(0).duration
-        @$audio.get(0).play()
-
       @$audio.on 'play', (event) =>
+        _mediaInitPlay()
         ($ '#mediaplay').find('.icon').removeClass('play').addClass('stop')
 
       @$audio.on 'pause', (event) =>
         ($ '#mediaplay').find('.icon').removeClass('stop').addClass('play')
 
       @$audio.on 'timeupdate', (event) =>
-        @setStatus null, null, @$audio.get(0).currentTime
+        __time = @$audio.get(0).currentTime
+        @setStatus null, null, __time
+        @storage.set 'media-time', __time
+
+      @$audio.on 'canplay', =>
+        _mediaDuration = @getTimeFormat @$audio.get(0).duration
+        @$audio.get(0).play()
 
       # init
       @versionCheck()
-      @envModeCheck()
       @autosetDirUp()
       @mediaHandler()
       @headersCheck()
@@ -113,7 +119,14 @@ class Vide
     $.ajax location.pathname,
       type: 'HEAD'
       complete: (res) =>
-        @flashError 404 if res.status is 404
+        if res.status is 404
+          @flashError 404
+          @$body.hide()
+        else if res.status is 401
+          @flashError 401
+          @$body.hide()
+        else
+          @$body.show()
 
   getTimeFormat: (sec = 0) ->
     __min = parseInt sec / 60, 10
@@ -144,6 +157,20 @@ class Vide
       .replace(/\-/g, '\\-')
       .replace(/\|/g, '\\|')
       .replace(/\//g, '\\/')
+
+  storage:
+    get: (key = null) ->
+      return null unless window.localStorage
+      return localStorage.getItem key
+    set: (key = null, val = null) ->
+      return null unless window.localStorage
+      return localStorage.setItem key, val
+    unset: (key = null) ->
+      return null unless window.localStorage
+      return localStorage.removeItem key
+    clear: ->
+      return null unless window.localStorage
+      return localStorage.clear()
 
   flashError: (string) ->
     if string is 404
@@ -195,41 +222,55 @@ class Vide
 
   mediaHandler: ->
     if (__audio = ($ '#dataaudio')).size()
-      __audio.attr 'data-src'
-      @setMedia 'audio', __audio.attr('data-src'), __audio.attr('data-name')
       @echo 'mediaHandler:', 'audio'
-    if (__video = ($ '#datavideo')).size()
+      __src = __audio.attr('data-src')
+      __key = __audio.attr('data-key')
+      __sub = __audio.attr('data-sub')
+      @setMedia 'audio', __src
+      @setStatus __key, __sub
+      @storage.set 'media-src', __src
+      @storage.set 'media-key', __key
+      @storage.set 'media-sub', __sub
+    else if (__video = ($ '#datavideo')).size()
       __video.attr 'data-src'
       @setMedia 'video', __video.attr('data-src'), __video.attr('data-name')
       @echo 'mediaHandler:', 'video'
+    else
+      __src = @storage.get 'media-src'
+      __key = @storage.get 'media-key'
+      __sub = @storage.get 'media-sub'
+      __time = @storage.get 'media-time' || 0
+      @echo 'mediaHandler:', 'Resume:', __src, __key, __sub
+      if __src and __key and __sub
+        @setMedia 'audio', __src, __time
+        @setStatus __key, __sub, null
 
-  setStatus: (main = null, sub = null, bar = 0) ->
-    if main
-      @$stat.find('.status').text main
+  setMedia: (type, src, time = 0) ->
+    @echo 'setMedia:', type, decodeURI src
+    switch type
+      when 'audio'
+        if (@$audio.attr 'src') isnt src
+          @$audio.attr 'src', src
+        _mediaInitPlay = =>
+          @$audio.get(0).currentTime = time
+          _mediaInitPlay = ->
+          @echo 'mediainit', time
+        @$stat.attr 'href', location.pathname
+
+  setStatus: (key = null, sub = null, bar = 0) ->
+    if key
+      @$stat.find('.status-key').text key
       @statusMarquee()
     if sub
       @$stat.find('.status-sub').text sub
       @statusMarquee()
-    if 0 < bar
-      @$stat.find('.status-bar').hide()
-      @$stat.find('.status-min').show().text "#{@getTimeFormat bar} - #{_mediaDuration}"
-    else
-      @$stat.find('.status-bar').show()
-      @$stat.find('.status-min').hide()
-
-  setMedia: (type, src, name) ->
-    @echo 'setMedia:', type, decodeURI src
-    switch type
-      when 'status'
-        @$stat.find('.status').text src
-        @statusMarquee()
-      when 'substatus'
-        @$stat.find('.status-sub').text src
-        @statusMarquee()
-      when 'audio'
-        (@$audio.attr 'src', src) if (@$audio.attr 'src') isnt src
-        @$stat.attr 'href', location.pathname
-        @setStatus (($ '#dataaudio').attr 'data-status'), (($ '#dataaudio').attr 'data-substatus'), 1
+    if bar
+      if 0 < bar
+        @$stat.find('.status-bar').hide()
+        @$stat.find('.status-min').show().text "#{@getTimeFormat bar} - #{_mediaDuration}"
+      else
+        @$stat.find('.status-bar').show()
+        @$stat.find('.status-min').hide()
 
   statusMarquee: ->
     @echo 'statusMarquee:'
@@ -256,14 +297,18 @@ class Vide
                 if res.status is 0
                   @flashError 'Could not connect to the server.'
                 else
-                  if res.status is 404
-                    @flashError 404
-                  if res.status is 401
-                    @flashError 401
-                  @$data.html res.responseText
                   @$load.fadeOut 60, =>
-                    @mediaHandler()
-                    @$data.slideDown 120
+                    if res.status is 404
+                      @flashError 404
+                      @$body.hide()
+                    else if res.status is 401
+                      @flashError 401
+                      @$body.hide()
+                    else
+                      @$body.show()
+                      @$data.html res.responseText
+                      @mediaHandler()
+                      @$data.slideDown 120
                 _currentlyLoad = no
 
   dataSort: ($target) ->
@@ -322,3 +367,7 @@ $ ->
 
   # Data Sort
   ($ document).on 'click', '.orderby', -> vide.dataSort ($ @)
+
+  # Star
+  ($ document).on 'click', '#pushstar', ->
+    ($ @).toggleClass 'starred'

@@ -38,14 +38,14 @@ html
         .container
           ul.list
             if req.isAuthenticated()
-              li.icon: a(href='javascript:void(0)')#mediaprev: .icon.prev
-              li.icon: a(href='javascript:void(0)')#mediaplay: .icon.play
-              li.icon: a(href='javascript:void(0)')#medianext: .icon.next
+              li.icon: a#mediaprev.console(href='javascript:void(0)'): .icon.prev
+              li.icon: a#mediaplay.console(href='javascript:void(0)'): .icon.play
+              li.icon: a#medianext.console(href='javascript:void(0)'): .icon.next
             li
               a#stat(href='javascript:void(0)')
                 audio#audio
                 video#video
-                .status geta6.net v#{req.app.get('version')}
+                .status-key geta6.net v#{req.app.get('version')}
                 .status-sub
                 .status-min
                 .status-bar

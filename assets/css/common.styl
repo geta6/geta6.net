@@ -76,7 +76,6 @@ location(p, t, r, b, l)
       overflow ellipsis
       vertical-align top
       &.label
-        max-width 100px
         width 20%
         font-weight bold
         border-right 1px solid #E5E5E5
@@ -94,6 +93,13 @@ location(p, t, r, b, l)
         width 10%
         text-align center
         font-size 9px
+        .star
+          background-image url('/img/icon/star.blank.png')
+        &.starred
+          background linear-gradient(top, #FFFCF6, #FDF1D8)
+          .star
+            background-image url('/img/icon/star.png')
+
       &:after
         content ' '
         location absolute 0 0 0 auto
@@ -126,6 +132,7 @@ location(p, t, r, b, l)
         padding 10px 0
       &.head
         border-top 1px solid #CACACA
+      &.head, &.foot
         .icon
           position absolute
           top 50%
@@ -221,14 +228,14 @@ location(p, t, r, b, l)
     background-image url('/img/icon/user.png')
   &.date
     background-image url('/img/icon/date.png')
-  &.logs
-    background-image url('/img/icon/log.png')
+  &.note
+    background-image url('/img/icon/note.png')
     &.multi
-      background-image url('/img/icon/logs.png')
-  &.tags
-    background-image url('/img/icon/tag.png')
+      background-image url('/img/icon/notes.png')
+  &.tagg
+    background-image url('/img/icon/tagg.png')
     &.multi
-      background-image url('/img/icon/tags.png')
+      background-image url('/img/icon/taggs.png')
   &.star
     background-image url('/img/icon/star.png')
     &.blank
@@ -264,7 +271,7 @@ location(p, t, r, b, l)
   width 100%
 
 @media screen and (max-device-width:320px)
-  .head
+  .head, .foot
     .icon
       // width 16px !important
       // height 16px !important
