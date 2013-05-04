@@ -8,10 +8,10 @@ ItemSchema = new mongo.Schema
   deep: { type: Number, index: yes }
   type: { type: String, default: 'application/octet-stream', index: yes }
   date: { type: Date, default: Date.now(), index: yes }
+  play: { type: Number, default: 0 }
   tags: [{ type: String }]
   star: [{ type: mongo.Schema.Types.ObjectId, ref: 'users' }]
   note: [{ type: mongo.Schema.Types.ObjectId, ref: 'notes' }]
-  meta: [{ type: mongo.Schema.Types.Mixed }]
 
 select = 'path name size deep type date tags star note'
 

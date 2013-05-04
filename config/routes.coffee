@@ -1,6 +1,7 @@
 module.exports = (app) ->
 
   fs = require 'fs'
+  util = require 'util'
   async = require 'async'
   passport = require 'passport'
 
@@ -9,6 +10,7 @@ module.exports = (app) ->
 
   # Response
   response = (req, res, code, data) ->
+    res.header 'x-vide-versions', req.app.get('version')
     data or= { req: req, data: {} }
     unless code is 'auto'
       res.statusCode = code
@@ -17,6 +19,12 @@ module.exports = (app) ->
     unless req.headers['x-requested-with']
       return res.render 'layout', data
     return res.render 'browse', data
+
+  # Data Handle
+  incrementPlay = (info, done) ->
+    done or= ->
+    info.play = (info.play || 0) + 1
+    info.save done
 
   # Stream
   app.all /\/([0-9a-f]{24})/, (req, res) ->
@@ -27,6 +35,8 @@ module.exports = (app) ->
       return res.stream (new Buffer fs.readFileSync info.path),
         'Content-Type': info.type
         'Last-Modified': info.date
+      , (ini, end, all) ->
+        incrementPlay info
 
   app.all '/login', (req, res, next) ->
     if req.method.toUpperCase() is 'POST'

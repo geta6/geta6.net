@@ -37,6 +37,7 @@ class Vide
     @$video = ($ '#video')
 
     @envModeCheck()
+
     if @isAuthenticated()
       # pushState
       ($ document).on 'click', 'a', (event) =>
@@ -89,13 +90,12 @@ class Vide
         @$audio.get(0).play()
 
       # init
-      @versionCheck()
       @autosetDirUp()
       @mediaHandler()
       @headersCheck()
 
     else
-      @$stat.text "authentication required"
+      @setStatus 'authentication required'
 
   isAuthenticated: ->
     __authenticated = ($ 'meta[name=ensure]').size()
@@ -106,27 +106,31 @@ class Vide
     _scriptEnvMode = ($ 'meta[name=environment]').attr 'content'
     @echo 'envModeChek:', _scriptEnvMode
 
-  versionCheck: ->
+  versionCheck: (xhr) ->
     __versionToInt = (version) ->
-      return parseInt (version.replace '.', ''), 10
-    __currentVersion = ($ 'meta[name=version]').attr 'content'
-    __scriptVersion = __versionToInt _scriptVersion
-    if (__versionToInt _scriptVersion) < (__versionToInt __currentVersion)
-      @flashError "javascript v#{_scriptVersion} deprecated (v#{__currentVersion})"
-    @echo 'versionCheck:', _scriptVersion
+      return parseInt (version.replace /\./g, ''), 10
+    __serverVersion = xhr.getResponseHeader 'x-vide-versions'
+    __remoteVersion = _scriptVersion
+    @echo 'versionCheck:', 'server:', __serverVersion, 'remote:', __remoteVersion
+    if (__versionToInt __remoteVersion) < (__versionToInt __serverVersion)
+      @flashError "javascript v#{__remoteVersion} deprecated (v#{__serverVersion})"
+      @$body.hide()
+      return no
+    return yes
 
   headersCheck: ->
     $.ajax location.pathname,
       type: 'HEAD'
-      complete: (res) =>
-        if res.status is 404
-          @flashError 404
-          @$body.hide()
-        else if res.status is 401
-          @flashError 401
-          @$body.hide()
-        else
-          @$body.show()
+      complete: (xhr) =>
+        if @versionCheck xhr
+          if xhr.status is 404
+            @flashError 404
+            @$body.hide()
+          else if xhr.status is 401
+            @flashError 401
+            @$body.hide()
+          else
+            @$body.show()
 
   getTimeFormat: (sec = 0) ->
     __min = parseInt sec / 60, 10
@@ -226,11 +230,13 @@ class Vide
       __src = __audio.attr('data-src')
       __key = __audio.attr('data-key')
       __sub = __audio.attr('data-sub')
-      @setMedia 'audio', __src
+      __ref = location.pathname
+      @setMedia 'audio', __src, __ref, 0
       @setStatus __key, __sub
       @storage.set 'media-src', __src
       @storage.set 'media-key', __key
       @storage.set 'media-sub', __sub
+      @storage.set 'media-ref', __ref
     else if (__video = ($ '#datavideo')).size()
       __video.attr 'data-src'
       @setMedia 'video', __video.attr('data-src'), __video.attr('data-name')
@@ -239,23 +245,24 @@ class Vide
       __src = @storage.get 'media-src'
       __key = @storage.get 'media-key'
       __sub = @storage.get 'media-sub'
+      __ref = @storage.get 'media-ref'
       __time = @storage.get 'media-time' || 0
       @echo 'mediaHandler:', 'Resume:', __src, __key, __sub
       if __src and __key and __sub
-        @setMedia 'audio', __src, __time
+        @setMedia 'audio', __src, __ref, __time
         @setStatus __key, __sub, null
 
-  setMedia: (type, src, time = 0) ->
+  setMedia: (type, src, ref, time = 0) ->
     @echo 'setMedia:', type, decodeURI src
     switch type
       when 'audio'
         if (@$audio.attr 'src') isnt src
           @$audio.attr 'src', src
+          @$stat.attr 'href', ref
         _mediaInitPlay = =>
           @$audio.get(0).currentTime = time
           _mediaInitPlay = ->
           @echo 'mediainit', time
-        @$stat.attr 'href', location.pathname
 
   setStatus: (key = null, sub = null, bar = 0) ->
     if key
@@ -292,23 +299,24 @@ class Vide
           @echo 'historyHandle:', decodeURI __currentpath
           $.ajax __currentpath,
             data: order: _dataSortOrder
-            complete: (res) =>
+            complete: (xhr) =>
               @$load.fadeOut 60, =>
-                if res.status is 0
+                if xhr.status is 0
                   @flashError 'Could not connect to the server.'
                 else
                   @$load.fadeOut 60, =>
-                    if res.status is 404
-                      @flashError 404
-                      @$body.hide()
-                    else if res.status is 401
-                      @flashError 401
-                      @$body.hide()
-                    else
-                      @$body.show()
-                      @$data.html res.responseText
-                      @mediaHandler()
-                      @$data.slideDown 120
+                    if @versionCheck xhr
+                      if xhr.status is 404
+                        @flashError 404
+                        @$body.hide()
+                      else if xhr.status is 401
+                        @flashError 401
+                        @$body.hide()
+                      else
+                        @$body.show()
+                        @$data.html xhr.responseText
+                        @mediaHandler()
+                        @$data.slideDown 120
                 _currentlyLoad = no
 
   dataSort: ($target) ->

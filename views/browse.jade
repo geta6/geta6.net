@@ -8,7 +8,7 @@ if req.isAuthenticated()
         - var order = req.query.order?req.query.order:{by: 'date', asc: 'false'};
         a.each.orderby.name(class=order.by=='name'?(order.asc=='true'?'sort-asc':'sort-dsc'):'', href='javascript:void(0)') name
         a.each.orderby.star(class=order.by=='star'?(order.asc=='true'?'sort-asc':'sort-dsc'):'', href='javascript:void(0)'): .icon.star
-        a.each.orderby.logs(class=order.by=='logs'?(order.asc=='true'?'sort-asc':'sort-dsc'):'', href='javascript:void(0)'): .icon.logs
+        a.each.orderby.note(class=order.by=='logs'?(order.asc=='true'?'sort-asc':'sort-dsc'):'', href='javascript:void(0)'): .icon.note
         a.each.orderby.date(class=order.by=='date'?(order.asc=='true'?'sort-asc':'sort-dsc'):'', href='javascript:void(0)'): .icon.date
 
       .data.form
@@ -49,13 +49,14 @@ if req.isAuthenticated()
 
       if data.info.type.match(/^video/)
         .data.body: .each
-          video(src='/#{data.info._id}', controls, autoplay)
+          video(src='#{data.info._id}', controls, autoplay)
 
       else if data.info.type.match(/^audio/)
         - var dataname = data.info.name.replace(/^[0-9\-]+ (.+?)\.[0-9a-z]+$/, '$1')
         - var dataartist = data.info.path.split('/')[4]
         - var dataalbum = data.info.path.split('/')[5]
-        #dataaudio(data-key=dataname, data-sub='#{dataartist} - #{dataalbum}', data-src='#{data.info._id}')
+        - var datasrc = req.url.split('/').slice(0, req.url.split('/').length-1).join('/') + '/' + data.info._id
+        #dataaudio(data-key=dataname, data-sub='#{dataartist} - #{dataalbum}', data-src='#{datasrc}')
         .data.body
           .each.label Artist
           .each= dataartist
@@ -83,17 +84,16 @@ if req.isAuthenticated()
           span= _.date(data.info.date).format('YY/MM/DD HH:mm:ss')
           span= ' - ' + _.date(data.info.date).fromNow()
       .data.body
+        .each.label Count
+        .each= data.info.play + 1 || 1
+      .data.body
         .each.label ID
         .each= data.info._id
 
       .data.foot
-        a.each.center.noajax(href='/#{data.info._id}')
+        a.each.center.noajax(href='#{data.info._id}')
           span Download (#{datasize} MB)
         a.each.center(href="afp://geta6.net/media#{data.info.path.replace('/media/var', '')}") Open with AFP
-
-  else
-    .data.force-first
-      .each Aw, Snap.
 
 else
   form(action='/login', method='POST')
