@@ -14,7 +14,6 @@ exports.UserEvent = (app) ->
       res.setHeader 'Cache-Control', 'no-cache, no-store, must-revalidate'
       return (res.redirect 'back') unless (username = req.body.username)
       return (res.redirect 'back') unless (password = req.body.password)
-      console.log req.body
       return isuser username, password, (err, success) ->
         return (res.redirect 'back') if err or !success
         return User.findByName username, (err, user) ->
