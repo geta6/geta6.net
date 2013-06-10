@@ -34,10 +34,12 @@ app.set 'models', require.all 'models'
 app.set 'helper', require.all 'helper'
 app.set 'views', path.resolve 'views'
 app.set 'view engine', 'jade'
-app.use express.favicon()
 app.use app.get('helper').logger()
 app.use connect.assets
-app.use connect.stream
+app.use (req, res, next) ->
+  if req.url isnt '/session'
+    return connect.stream req, res, next
+  return next()
 app.use express.bodyParser()
 app.use express.methodOverride()
 app.use express.cookieParser()

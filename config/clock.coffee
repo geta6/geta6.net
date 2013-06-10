@@ -18,11 +18,13 @@ if 'nodectl' is path.basename process.argv[1]
       env: process.env
       cwd: process.cwd()
       detached: yes
-  , 1000 * 10
+  , 1000 * 60 * 15
 
 else
 
   # Worker
+
+  console.log 'start'
 
   app = require path.resolve 'config', 'app'
   {File} = app.get 'models'
@@ -40,9 +42,11 @@ else
         files.push _.extend name: file, fs.statSync file
         if fs.statSync(file).isDirectory()
           files = files.concat statdirSync file
+    files.push _.extend name:'/media/var', fs.statSync '/media/var'
+
     return files
 
-  async.map (statdirSync '/media'), (stat, next) ->
+  async.map (statdirSync '/media/var'), (stat, next) ->
     File.findByPath stat.name, (err, file) ->
       unless file
         create++

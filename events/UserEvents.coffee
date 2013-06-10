@@ -12,15 +12,16 @@ exports.UserEvent = (app) ->
 
     create: (req, res) ->
       res.setHeader 'Cache-Control', 'no-cache, no-store, must-revalidate'
-      return res.redirect 'back' unless (username = req.body.username)
-      return res.redirect 'back' unless (password = req.body.password)
-      isuser username, password, (err, success) ->
-        return res.redirect 'back' if err or !success
-        User.findByName username, (err, user) ->
+      return (res.redirect 'back') unless (username = req.body.username)
+      return (res.redirect 'back') unless (password = req.body.password)
+      console.log req.body
+      return isuser username, password, (err, success) ->
+        return (res.redirect 'back') if err or !success
+        return User.findByName username, (err, user) ->
           user = new User { name: username, mail: '' } unless user
-          pubkey username, (err, keys) ->
+          return pubkey username, (err, keys) ->
             user.keys = keys
-            user.save ->
+            return user.save ->
               req.session.user = user
               if '/session' is (url.parse req.headers.referer).pathname
                 return res.redirect '/'

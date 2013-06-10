@@ -3,6 +3,7 @@ html
   head
     if info
       if info.name == 'var'
+        - info.name = '/'
         title Getabuntu
       else
         title #{info.name} · Getabuntu
@@ -38,10 +39,11 @@ html
                 a(href="#{p.slice(0,++i).join('/')}")= p[i-1]
                 span.separate /
               span= p[p.length-1]
-        .pagefind(style='display:#{req.query.q?'block':'none'}')
-          .container
-            form
-              input(type='text', name='q', placeholder='Search "#{info.name}"', value=req.query.q)
+        if req.authenticated && info
+          .pagefind(style='display:#{req.query.q?'block':'none'}')
+            .container
+              form
+                input(type='text', name='q', placeholder='Search "#{info.name}"', value=req.query.q)
         .pagebody
           .container
             block content
