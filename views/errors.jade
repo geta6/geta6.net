@@ -1,0 +1,77 @@
+!!! 5
+html
+  head
+    meta(name='viewport', content='width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no')
+    link(rel='stylesheet', href='//fonts.googleapis.com/css?family=Open+Sans:400,600,300')
+    title= err ? 'Oh no · Getabuntu' : 'Page not found · Getabuntu'
+    :stylus
+      html, body
+        margin 0
+        background-color #F1F1F1
+        font-family 'Open Sans'
+      .container
+        margin 50px auto 40px auto
+        max-width 960px
+        text-align center
+      a
+        color #4183c4
+        text-decoration none
+        &:hover
+          text-decoration underline
+      h1
+        position relative
+        letter-spacing -1px
+        line-height 60px
+        font-size 60px
+        font-weight 100
+        margin 0px
+        text-shadow 0 1px 0 #fff
+      h2
+        position absolute
+        top 50px
+        left 50%
+        margin-left -19px
+        width 50px
+        height 50px
+        line-height 50px
+        font-size 50px
+        text-align center
+        font-weight 100
+        -webkit-transform: rotateZ(90deg);
+        -moz-transform:    rotateZ(90deg);
+        -ms-transform:     rotateZ(90deg);
+        -o-transform:      rotateZ(90deg);
+        // background red
+      p
+        color rgba(0, 0, 0, 0.5)
+        margin 20px 0 40px
+      ul
+        margin 35px 0 0 0
+        padding 0
+        color #ccc
+        li
+          display inline-block
+          &:not(:last-child)
+            &:after
+              content ' - '
+        a
+          color #666666
+          font-weight 200
+          font-size 14px
+          margin 0 10px
+
+  body
+    .container
+      if err
+        h1 What ?!
+        p Your browser did something unexpected. Please contact us if the problem persists.
+
+      else
+        h1 404
+          h2 (
+        p This is not the web page you are looking for.
+
+      ul
+        li: a(href='/forum') Support Forum
+        li: a(href='/status') Server Status
+        li: a(href='//twitter.com/getabuntu') @getabuntu

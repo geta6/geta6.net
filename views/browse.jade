@@ -1,0 +1,42 @@
+extends layout
+
+block content
+  .bubble
+    table
+      tr.meta
+        th.icon: i.icon.folder_open
+        th.content= info.name=='var'?'/':info.name
+        th
+          span #{stat.count} files,
+          span #{_.size(stat.sizes)},
+          span: time(datetime=info.updated)= _.date(info.updated).fromNow()
+      tr.head
+        th.icon
+        if req.query.sort == 'name'
+          th.content: a(href='?sort=-name') ▲ Name
+          th: a(href='?sort=-date') Time
+        if req.query.sort == '-name'
+          th.content: a(href='?sort=name') ▼ Name
+          th: a(href='?sort=-date') Time
+        if req.query.sort == 'date'
+          th.content: a(href='?sort=name') Name
+          th: a(href='?sort=-date') ▼ Time
+        if req.query.sort == '-date'
+          th.content: a(href='?sort=name') Name
+          th: a(href='?sort=date') ▲ Time
+
+      for file in files
+        tr.browse
+          td.icon
+            if file.mime == 'text/directory'
+              i.icon.folder_open
+            else if /audio/.test(file.mime)
+              i.icon.music
+            else if /video/.test(file.mime)
+              i.icon.facetime_video
+            else if /pdf/.test(file.mime)
+              i.icon.book_open
+            else
+              i.icon.file
+          td.content: a(href=file.addr)= file.name
+          td.age: a(href=file.addr): time(datetime=file.updated)= _.date(file.updated).fromNow()

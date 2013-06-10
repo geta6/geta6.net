@@ -1,0 +1,19 @@
+extends layout
+
+block pagehead
+
+block content
+  #authform
+
+    if req.authenticated
+      form(action='/session', method='POST')
+        img(src=req.app.get('helper').gravatar(req.session.user.mail, 160))
+        input(type='hidden', name='_method', value='DELETE')
+        p.centering Sign out of Getabuntu?
+        button(type='submit', tabindex='3') Sign out
+
+    else
+      form(action='/session', method='POST')
+        input(type='text', name='username', placeholder='username', autocapitalize='off', autofocus='autofocus', spellcheck='false', tabindex='1')
+        input(type='password', name='password', placeholder='password', tabindex='2')
+        button(type='submit', tabindex='3') Sign in

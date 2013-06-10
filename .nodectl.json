@@ -1,0 +1,5 @@
+{
+  "execmaster": "config/clock.coffee",
+  "cluster": 1,
+  "watch": true
+}

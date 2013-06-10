@@ -1,0 +1,30 @@
+extends layout
+
+block content
+  .bubble
+    table
+      tr.meta
+        th.icon
+          if /audio/.test(info.mime)
+            i.icon.music
+          else if /video/.test(info.mime)
+            i.icon.facetime_video
+          else
+            i.icon.file
+        th.content= info.name
+        th
+          span #{_.size(info.size)},
+          span: time(datetime=info.updated)= _.date(info.updated).fromNow()
+      tr.head
+        th.controls(colspan=3)
+          button: i.icon.star
+          button: i.icon.comments
+          a.button(href='/stream#{info.addr}?download=true'): i.icon.download
+      tr.browse
+        td(colspan=3)
+          if /audio/.test(info.mime)
+            audio.preview(src="/stream#{info.addr}", controls)
+          else if /video/.test(info.mime)
+            video.preview(src="/stream#{info.addr}", controls)
+          else if /image/.test(info.mime)
+            img.preview(src="/stream#{info.addr}")

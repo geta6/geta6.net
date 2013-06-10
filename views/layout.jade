@@ -1,0 +1,57 @@
+!!! 5
+html
+  head
+    if info
+      if info.name == 'var'
+        title Getabuntu
+      else
+        title #{info.name} · Getabuntu
+    else
+      title Getabuntu
+    meta(name='viewport', content='width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no')
+    link(rel='stylesheet', href='/css/style.css')
+    link(rel='stylesheet', href='/css/icons.css')
+
+  body
+    #header
+      .container
+        .header-wordmark
+          a.logo.invert(href='/') Getabuntu
+        if req.authenticated
+          .header-actions
+            a.invert.button(href='/#{req.session.user.name}')
+              img(src=req.app.get('helper').gravatar(req.session.user.mail, 34))
+              span.username= req.session.user.name
+            //- a.invert.button(href='/config'): i.icon.settings
+            if info && info.mime == 'text/directory'
+              button#search: i.icon.search
+            a.invert.button(href='/session'): i.icon.power
+
+    #site-content
+      .site-container
+        block pagehead
+          .pagehead
+            .container
+              - var i = 0
+              - var p = (decodeURI(req.url)).split('/')
+              while i < p.length - 1
+                a(href="#{p.slice(0,++i).join('/')}")= p[i-1]
+                span.separate /
+              span= p[p.length-1]
+        .pagefind(style='display:#{req.query.q?'block':'none'}')
+          .container
+            form
+              input(type='text', name='q', placeholder='Search "#{info.name}"', value=req.query.q)
+        .pagebody
+          .container
+            block content
+
+    #footer
+      .container
+        p.right &copy; 2010-#{_.date().format('YYYY')} Getabuntu.
+        ul#notes
+          li: a(href='/forum') Forum
+          li: a(href='/status') Status
+
+    script(src='//cdnjs.cloudflare.com/ajax/libs/jquery/2.0.2/jquery.min.js')
+    script(src='/js/socket.js')
