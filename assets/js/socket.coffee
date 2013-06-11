@@ -20,8 +20,13 @@ $ ->
   socket.emit 'ping'
 
   ($ '#search').on 'click', ->
-    ($ '.pagefind').slideToggle 180, ->
-      ($ '.pagefind input').focus()
+    if (($ '.pagefind').css 'display') is 'block'
+      ($ '.site-container').animate paddingTop: '52px', 180
+      ($ '.pagefind').slideUp 180
+    else
+      ($ '.site-container').animate paddingTop: '113px', 180
+      ($ '.pagefind').slideDown 180, ->
+        ($ '.pagefind input').focus()
 
   ($ '.pageinfo .remove').on 'click', ->
     ($ '.pageinfo').slideUp 180, ->

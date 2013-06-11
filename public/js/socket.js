@@ -1,1 +1,0 @@
-!function(){$(function(){return $("#search").on("click",function(){return $(".pagefind").slideToggle(180,function(){return $(".pagefind input").focus()})})})}.call(this);

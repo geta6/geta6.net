@@ -42,11 +42,10 @@ FileModel = new mongoose.Schema
 
 FileModel.statics.findByPath = (path, done) ->
   @findOne(path: path)
-    .lean()
     .populate('bolts')
     .exec (err, file) =>
       Bolt.populate file, {path: 'bolts.user', model: User}, (err, file) ->
-        console.log file
+        console.error err if err
         return done err, file
 
 FileModel.statics.findUnder = (path, sort = {name: 1}, done) ->

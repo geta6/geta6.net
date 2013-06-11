@@ -27,7 +27,7 @@ else
   console.log 'start'
 
   app = require path.resolve 'config', 'app'
-  {File} = app.get 'models'
+  {File} = app.get('models')
 
   update = 0
   create = 0
