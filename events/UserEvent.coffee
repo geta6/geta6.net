@@ -31,7 +31,8 @@ exports.UserEvent = (app) ->
       req.session.user = {}
       return res.redirect 'back'
 
-  browse: (req, res) ->
+  browse: (req, res, next) ->
+    next()
 
   avatar: (req, res) ->
     User.findById req.params[0], (err, user) ->

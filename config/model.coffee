@@ -46,7 +46,7 @@ FileModel.statics.findByPath = (path, done) ->
     .populate('bolts')
     .exec (err, file) =>
       Bolt.populate file, {path: 'bolts.user', model: User}, (err, file) ->
-        console.log file
+        #console.log file
         return done err, file
 
 FileModel.statics.findUnder = (path, sort = {name: 1}, done) ->
