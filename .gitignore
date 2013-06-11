@@ -14,3 +14,7 @@ Gemfile.lock
 .AppleDouble
 .AppleDB
 .AppleDesktop
+
+public/forum
+public/js
+public/css
