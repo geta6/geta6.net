@@ -1,11 +1,28 @@
-# socket = io.connect 'http://localhost:3000'
+socket = io.connect "http://#{location.host}"
 
-# socket.on 'test', (msg) ->
-#   console.log msg
+socket.on 'pong', ->
+  ($ '.socket_disabled').attr 'disabled', no
 
-# socket.emit 'hoge', {}
+socket.on 'error', (msg) ->
+  ($ '.pageinfo').slideDown(180).find('.flash').addClass('error').find('span').text msg
+
+socket.on 'success', (which) ->
+  switch which
+    when 'love'
+      $span = ($ '#love').addClass('active').find('span')
+      $span.text parseInt($span.text(), 10) + 1
+
+window.g6 =
+  love: (id) -> socket.emit 'love', id: id
+  cmnt: (id, cmnt) -> socket. emit 'cmnt', { id: id, cmnt: cmnt }
 
 $ ->
+  socket.emit 'ping'
+
   ($ '#search').on 'click', ->
     ($ '.pagefind').slideToggle 180, ->
       ($ '.pagefind input').focus()
+
+  ($ '.pageinfo .remove').on 'click', ->
+    ($ '.pageinfo').slideUp 180, ->
+      ($ '.pageinfo span').text ''

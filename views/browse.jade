@@ -5,7 +5,7 @@ block content
     table
       tr.meta
         th.icon: i.icon.folder_open
-        th.content= info.name=='var'?'/':info.name
+        th.content= info.name
         th
           span #{stat.count} files,
           span #{_.size(stat.sizes)},

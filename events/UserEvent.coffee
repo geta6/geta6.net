@@ -30,3 +30,9 @@ exports.UserEvent = (app) ->
       res.setHeader 'Cache-Control', 'no-cache, no-store, must-revalidate'
       req.session.user = {}
       return res.redirect 'back'
+
+  browse: (req, res) ->
+
+  avatar: (req, res) ->
+    User.findById req.params[0], (err, user) ->
+      return res.redirect app.get('helper').gravatar user.mail, (req.query.size || 80)

@@ -1,4 +1,4 @@
 {
   "execmaster": "config/clock.coffee",
-  "env": "production"
+  "env": "development"
 }

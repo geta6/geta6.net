@@ -1,17 +1,14 @@
 
 # Dependencies
 
+path = require 'path'
+cluster = require 'cluster'
+
 global._ = require 'underscore'
 global._.str = require 'underscore.string'
 global._.date = require 'moment'
-global._.size = (size) ->
-  units = ['B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
-  i = 0
-  ++i while (size/=1024) >= 1024
-  return "#{size.toFixed(1)} #{units[i+1]}"
+global._.size = (require path.resolve 'helper', 'consize').consize
 
-path = require 'path'
-cluster = require 'cluster'
 express = require 'express'
 
 mongoose = require 'mongoose'
@@ -30,7 +27,7 @@ require.all = require 'direquire'
 app = express()
 app.set 'port', process.env.PORT
 app.set 'events', require.all 'events'
-app.set 'models', require.all 'models'
+app.set 'models', require path.resolve 'config', 'model'
 app.set 'helper', require.all 'helper'
 app.set 'views', path.resolve 'views'
 app.set 'view engine', 'jade'
@@ -67,9 +64,10 @@ FileEvent = (app.get 'events').FileEvent app
 app.get    '/session',                  UserEvent.session.verify
 app.post   '/session',                  UserEvent.session.create
 app.delete '/session',                  UserEvent.session.delete
-app.get    '/search',                   FileEvent.search
 app.get    /^\/stream\/(.*)$/,          FileEvent.stream
+app.get    /^\/avatar\/(.*)$/,          UserEvent.avatar
 app.get    /^\/(.*)$/,          ensure, FileEvent.browse
+app.get    /^\/(.*)$/,          ensure, UserEvent.browse
 
 # Export
 
@@ -95,7 +93,36 @@ io.set 'browser client minification', yes
 io.set 'browser client etag', yes
 io.set 'authorization', app.get('helper').cookie connect.session
 
+{File} = app.get 'models'
+{Bolt} = app.get 'models'
+
 io.sockets.on 'connection', (socket) ->
+  socket.on 'ping', ->
+    socket.emit 'pong'
+  socket.on 'love', (data) ->
+    session = socket.handshake.session
+    if Object.keys(session.user).length
+      File.findById data.id, (err, file) ->
+        return (socket.emit 'error', err.message) if err
+        return (socket.emit 'error', 'Invalid ID.') unless file
+        bolt = new Bolt
+          user: session.user._id
+          file: data.id
+          type: 'love'
+          misc: ''
+          created: Date.now()
+        bolt.save (err, bolt) ->
+          return (socket.emit 'error', err.message) if err
+          file.bolts.push bolt
+          file.save (err, file) ->
+            return (socket.emit 'error', err.message) if err
+            return socket.emit 'success', 'love'
+    else
+      socket.emit 'error', 'You have to login'
+
+  socket.on 'cmnt', (data) ->
+    return socket.emit 'error', 'まだ実装してない'
+
   socket.on 'hoge', (data) ->
     # session = socket.handshake.session
     # console.info socket.handshake.session

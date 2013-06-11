@@ -27,7 +27,6 @@ exports.FileEvent = (app) ->
         when '-name' then sort = name: -1
         else sort = updated: -1
       if req.query.q
-        console.log req.query.q
         File.findUnderQuery fp, req.query.q, sort, (err, stats) ->
           return res.render 'browse',
             req: req
@@ -53,7 +52,4 @@ exports.FileEvent = (app) ->
             headers: 'Content-Type': 'application/octet-stream'
         return res.stream info.path
       return next()
-
-  search: (req, res) ->
-    res.render 'search', req: req
 

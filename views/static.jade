@@ -1,6 +1,11 @@
 extends layout
 
 block content
+  - info.bolts = _.sortBy(info.bolts, function(bolt){ return -1 * bolt.created })
+  - var loves = _.filter(info.bolts, function(bolt){ return bolt.type == 'love'})
+  - var cmnts = _.filter(info.bolts, function(bolt){ return bolt.type == 'cmnt'})
+  - var loveActive = 0 < _.filter(loves, function(bolt){ return bolt.user._id == req.session.user._id}).length
+  - var cmntActive = 0 < _.filter(cmnts, function(bolt){ return bolt.user._id == req.session.user._id}).length
   .bubble
     table
       tr.meta
@@ -17,8 +22,12 @@ block content
           span: time(datetime=info.updated)= _.date(info.updated).fromNow()
       tr.head
         th.controls(colspan=3)
-          button: i.icon.star
-          button: i.icon.comments
+          button#love.socket_disabled(onclick='window.g6.love("#{info._id}")', class=loveActive?'active':'', disabled)
+            i.icon.heart
+            span= loves.length
+          button#cmnt.socket_disabled(onclick='window.g6.cmnt("#{info._id}")', class=cmntActive?'active':'', disabled)
+            i.icon.chat
+            span= cmnts.length
           a.button(href='/stream#{info.addr}?download=true'): i.icon.download
       tr.browse
         td(colspan=3)
@@ -28,3 +37,12 @@ block content
             video.preview(src="/stream#{info.addr}", controls)
           else if /image/.test(info.mime)
             img.preview(src="/stream#{info.addr}")
+      for bolt in info.bolts
+        tr.bolts
+          td
+            img.avatar(src=req.app.get('helper').gravatar(bolt.user.mail, 44))
+            i.minimap.icon.heart
+          if bolt.type == 'love'
+            td <b>#{bolt.user.name}</b> loves this
+          td.time: time(datetime=bolt.created)= _.date(bolt.created).fromNow()
+

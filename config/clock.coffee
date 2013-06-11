@@ -38,7 +38,7 @@ else
   statdirSync = (dir, files = []) ->
     for src in fs.readdirSync dir
       file = path.join dir, src
-      unless /^\./.test path.basename file
+      unless /^(\.|Network Trash Folder|Temporary Items)/.test path.basename file
         files.push _.extend name: file, fs.statSync file
         if fs.statSync(file).isDirectory()
           files = files.concat statdirSync file

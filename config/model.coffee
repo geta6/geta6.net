@@ -3,6 +3,31 @@ mongoose = require 'mongoose'
 escapeRegExp = (string) ->
   return string.replace /([.*+?^${}()|[\]\/\\])/g, '\\$1'
 
+
+
+UserModel = new mongoose.Schema
+  name: { type: String, unique: yes, index: yes }
+  mail: { type: String }
+  keys: { type: mongoose.Schema.Types.Mixed }
+
+UserModel.statics.findByName = (username, done) ->
+  @findOne { name: username }, {}, {}, (err, user) ->
+    return done err, user
+
+exports.User = User = mongoose.model 'users', UserModel
+
+
+
+BoltModel = new mongoose.Schema
+  user: { type: mongoose.Schema.Types.ObjectId, ref: 'users', index: yes }
+  type: { type: String, index: yes }
+  misc: { type: String, default: '' }
+  created: { type: Date, default: Date.now() }
+
+exports.Bolt = Bolt = mongoose.model 'bolts', BoltModel
+
+
+
 FileModel = new mongoose.Schema
   node: { type: Number, unique: yes, index: yes }
   path: { type: String, unique: yes, index: yes }
@@ -11,21 +36,25 @@ FileModel = new mongoose.Schema
   stat: { type: mongoose.Schema.Types.Mixed }
   size: { type: Number, default: 0 }
   mime: { type: String }
-  acts: [{ type: mongoose.Schema.Types.ObjectId, ref: 'actions' }]
+  bolts: [{ type: mongoose.Schema.Types.ObjectId, ref: 'bolts' }]
   updated: { type: Date }
   created: { type: Date }
 
 FileModel.statics.findByPath = (path, done) ->
   @findOne(path: path)
-    .exec (err, file) ->
-      console.error err if err
-      return done err, file
+    .lean()
+    .populate('bolts')
+    .exec (err, file) =>
+      Bolt.populate file, {path: 'bolts.user', model: User}, (err, file) ->
+        console.log file
+        return done err, file
 
 FileModel.statics.findUnder = (path, sort = {name: 1}, done) ->
   match = $match: path: new RegExp "^#{escapeRegExp path}\/.*$"
   group = $group: {_id: null, sizes: {$sum:'$size'}, count: {$sum: 1} }
   @find(path: new RegExp "^#{escapeRegExp path}\/[^\/]*$")
     .sort(sort)
+    .populate('bolts')
     .exec (err, files) =>
       console.error err if err
       if files.length is 0
@@ -42,6 +71,7 @@ FileModel.statics.findUnderQuery = (path, query, sort = {name: 1}, done) ->
   group = $group: {_id: null, sizes: {$sum:'$size'}, count: {$sum: 1} }
   @find(condition)
     .sort(sort)
+    .populate('bolts')
     .exec (err, files) =>
       console.error err if err
       if files.length is 0
