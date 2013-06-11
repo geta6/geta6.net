@@ -16,3 +16,5 @@ Gemfile.lock
 .AppleDesktop
 
 public/forum
+public/js
+public/css
