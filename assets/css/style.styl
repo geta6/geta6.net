@@ -1,11 +1,13 @@
 @import 'nib'
-@import url('//fonts.googleapis.com/css?family=Open+Sans:400,600,300')
 @font-face
   font-family 'Glyphicons'
   font-style normal
   font-weight normal
   src local('Glyphicons'), url('//api.geta6.net/fonts/glyphicons-regular.woff') format('woff')
 
+@media screen and (max-width: 640px)
+  .username
+    display none !important
 
 /* / reset */
 
@@ -446,11 +448,6 @@ code
   li
     display inline-block
     margin-right 15px
-
-@media print, screen and (max-width: 480px)
-
-  .username
-    display none !important
 
 
 /* / Glyphicons */
@@ -1306,3 +1303,4 @@ i.icon.e-mail:before
   content "\e420"
 
 /* \ Glyphicons */
+

@@ -10,6 +10,7 @@ html
     else
       title Getabuntu
     meta(name='viewport', content='width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no')
+    link(rel='stylesheet', href='//fonts.googleapis.com/css?family=Open+Sans:300,400,600')
     link(rel='stylesheet', href='/css/style.css')
 
   body
@@ -21,7 +22,7 @@ html
           .header-actions
             a.invert.button(href='/#{req.session.user.name}')
               img(src=req.app.get('helper').gravatar(req.session.user.mail, 34))
-              span= req.session.user.name
+              span.username= req.session.user.name
             if info && info.mime == 'text/directory'
               button#search: i.icon.search
             a.invert.button(href='/session'): i.icon.power
