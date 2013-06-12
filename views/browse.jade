@@ -10,6 +10,7 @@ block content
           span #{stat.count} files,
           span #{_.size(stat.sizes)},
           span: time(datetime=info.updated)= _.date(info.updated).fromNow()
+        th
       tr.head
         th.icon
         if req.query.sort == 'name'
@@ -24,6 +25,7 @@ block content
         if req.query.sort == '-date'
           th.content: a(href='?sort=name') Name
           th: a(href='?sort=date') ▲ Time
+        th
 
       for file in files
         tr.browse
@@ -39,4 +41,12 @@ block content
             else
               i.icon.file
           td.content: a(href=file.addr)= file.name
-          td.age: a(href=file.addr): time(datetime=file.updated)= _.date(file.updated).fromNow()
+          td.age
+            a(href=file.addr): time(datetime=file.updated)= _.date(file.updated).fromNow()
+          td.stat
+            .stats
+              i.icon.eye_open
+              span= file.views
+            .stats
+              i.icon.flash
+              span= file.acts

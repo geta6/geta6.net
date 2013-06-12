@@ -4,7 +4,7 @@ socket.on 'pong', ->
   ($ '.socket_disabled').attr 'disabled', no
 
 socket.on 'error', (msg) ->
-  ($ '.pageinfo').slideDown(180).find('.flash').addClass('error').find('span').text msg
+  ($ '.pageinfo').slideDown(180).find('.message').addClass('error').find('span').text msg
 
 socket.on 'success', (which) ->
   switch which

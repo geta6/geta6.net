@@ -1,3 +1,4 @@
+path = require 'path'
 express = require 'express'
 
 exports.cookie = (sessionStore) ->
@@ -7,7 +8,7 @@ exports.cookie = (sessionStore) ->
       return accepr err, no
 
     if data?.headers?.cookie
-      (express.cookieParser 'keyboardcat') data, {}, (err) ->
+      (express.cookieParser (require path.resolve 'config', 'secrets').session) data, {}, (err) ->
         return error err if err
         sessionStore.load data.signedCookies['connect.sid'], (err, session) ->
           return error err if err

@@ -56,6 +56,7 @@ else
           size: if stat.isDirectory() then 0 else stat.size
           mime: if stat.isDirectory() then 'text/directory' else mime.lookup stat.name
           acts: []
+          view: 0
           updated: stat.mtime
           created: stat.ctime
       if (String file.updated) isnt (String stat.mtime)

@@ -9,6 +9,7 @@ exports.FileEvent = (app) ->
 
   {User} = app.get 'models'
   {File} = app.get 'models'
+  {Hist} = app.get 'models'
 
   browse: (req, res, next) ->
     fp = resolve req.params[0]
@@ -53,8 +54,10 @@ exports.FileEvent = (app) ->
             headers: 'Content-Type': 'application/octet-stream'
         return res.stream info.path, (err, ini, end) ->
           if ini is 0 and end is 1
-            User.findById req.session.user._id, (err, user) ->
-              user.hist or= []
-              user.hist.push info
-              user.save()
+            hist = new Hist
+              user: req.session.user._id
+              file: info._id
+            hist.save ->
+              info.view++
+              info.save()
       return next()

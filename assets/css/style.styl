@@ -68,7 +68,7 @@ location(p=relative, t=auto, r=auto, b=auto, l=auto)
   line-height 14px
   text-align center
 
-.flash
+.message
   position relative
   margin 0 auto
   padding 10px 30px 10px 15px
@@ -130,7 +130,7 @@ location(p=relative, t=auto, r=auto, b=auto, l=auto)
     width 100%
     margin 0
     border-bottom 1px solid #CACACA
-    // table-layout fixed
+    table-layout fixed
 
     tr
       &.meta
@@ -149,34 +149,51 @@ location(p=relative, t=auto, r=auto, b=auto, l=auto)
           .preview
             width 100%
 
-      td, th
-        padding 7px 3px
-        color #484848
-        vertical-align middle
-        white-space nowrap
+    td, th
+      padding 7px 3px
+      color #484848
+      vertical-align middle
+      white-space nowrap
+      overflow ellipsis
+      span
+        padding-right 5px
+      &:first-child
+        border-left 1px solid #CACACA
+      &:last-child
+        border-right 1px solid #CACACA
+      &.icon
+        width 17px
+        max-width 10px
+        padding-right 2px
+        padding-left 10px
+      &.stat
+        .stats
+          display inline-block
+          padding-left 5px
+          .icon
+            padding-right 5px
+      &.content
+        max-width 220px
+      &.controls
+        text-align right
+        button, .button
+          margin-left 5px
+      .label
+        width 100%
+        min-height 25px
+        line-height 25px
+        padding-right 100px
+        box-sizing border-box
         overflow ellipsis
-        max-width 100px
-        span
-          padding-right 5px
         input[type='text'], textarea
           width 100%
-        &:first-child
-          border-left 1px solid #CACACA
-        &:last-child
-          border-right 1px solid #CACACA
-        &.icon
-          width 17px
-          padding-right 2px
-          padding-left 10px
-          max-width 10
-        &.right
-          text-align right
-        &.content
-          max-width 220px !important
-        &.controls
-          text-align right
-          button, .button
-            margin-left 5px
+      .right
+        position absolute
+        top 50%
+        right 5px
+        margin-top -14.5px
+        width 100px
+        text-align right
 
 /* \ classes */
 
