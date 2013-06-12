@@ -52,4 +52,3 @@ exports.FileEvent = (app) ->
             headers: 'Content-Type': 'application/octet-stream'
         return res.stream info.path
       return next()
-

@@ -32,8 +32,18 @@ exports.UserEvent = (app) ->
       return res.redirect 'back'
 
   browse: (req, res, next) ->
-    next()
+    User.findByName req.params[0], (err, user) ->
+      return next() unless user
+      res.render 'status', { req: req, user: user }
 
-  avatar: (req, res) ->
-    User.findById req.params[0], (err, user) ->
-      return res.redirect app.get('helper').gravatar user.mail, (req.query.size || 80)
+  update: (req, res) ->
+    switch req.body.type
+      when 'ssh-ad' then return res.end 'ok'
+      when 'ssh-rm' then return res.end 'ok'
+      when 'passwd' then return res.end 'ok'
+      else
+        res.statusCode = 400
+        return res.render 'errors',
+          code: 400
+          msg: 'The requested query type is not available.'
+

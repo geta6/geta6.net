@@ -64,8 +64,8 @@ FileEvent = (app.get 'events').FileEvent app
 app.get    '/session',                  UserEvent.session.verify
 app.post   '/session',                  UserEvent.session.create
 app.delete '/session',                  UserEvent.session.delete
+app.post   '/update',                   UserEvent.update
 app.get    /^\/stream\/(.*)$/,          FileEvent.stream
-app.get    /^\/avatar\/(.*)$/,          UserEvent.avatar
 app.get    /^\/(.*)$/,          ensure, FileEvent.browse
 app.get    /^\/(.*)$/,          ensure, UserEvent.browse
 

@@ -1,9 +1,4 @@
 @import 'nib'
-@font-face
-  font-family 'Glyphicons'
-  font-style normal
-  font-weight normal
-  src local('Glyphicons'), url('//api.geta6.net/fonts/glyphicons-regular.woff') format('woff')
 
 @media screen and (max-width: 640px)
   .username
@@ -135,7 +130,7 @@ location(p=relative, t=auto, r=auto, b=auto, l=auto)
     width 100%
     margin 0
     border-bottom 1px solid #CACACA
-    table-layout fixed
+    // table-layout fixed
 
     tr
       &.meta
@@ -160,8 +155,11 @@ location(p=relative, t=auto, r=auto, b=auto, l=auto)
         vertical-align middle
         white-space nowrap
         overflow ellipsis
+        max-width 100px
         span
           padding-right 5px
+        input[type='text'], textarea
+          width 100%
         &:first-child
           border-left 1px solid #CACACA
         &:last-child
@@ -170,8 +168,11 @@ location(p=relative, t=auto, r=auto, b=auto, l=auto)
           width 17px
           padding-right 2px
           padding-left 10px
+          max-width 10
+        &.right
+          text-align right
         &.content
-          max-width 220px
+          max-width 220px !important
         &.controls
           text-align right
           button, .button
@@ -269,6 +270,21 @@ button, .button
     border-color #51A7E8
     box-shadow inset 0 1px 3px rgba(0,0,0,0.075),0 0 3px rgba(81,167,232,0.5)
 
+  &.danger
+    color #900
+    &:hover
+      color #fff
+      text-shadow 0px -1px 0 rgba(0,0,0,0.3)
+      background-color #b33630
+      background-image linear-gradient(top, #dc5f59, #b33630)
+      background-repeat repeat-x
+      border-color #cd504a
+    &:active
+      color #fff
+      background-color #b33630
+      background-image none
+      border-color #9f312c
+
 input, textarea
   min-height 34px
   padding 7px 8px
@@ -283,6 +299,7 @@ input, textarea
   box-sizing border-box
   transition all 0.15s ease-in
   vertical-align middle
+  resize none
 
   &:focus, &.focus
     border-color #51a7e8
@@ -396,6 +413,18 @@ code
         vertical-align center
         margin-left 7px
         margin-right -5px
+
+#status
+  padding 20px 0
+  font-size 14px
+  img
+    display block
+    margin 0 auto 15px auto
+    border-radius 5px
+    width 80px
+    height 80px
+  p
+    margin 0 auto 15px auto
 
 #authform
   padding 60px 0

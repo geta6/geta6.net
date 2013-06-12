@@ -66,6 +66,13 @@ html
         h1 What ?!
         p Your browser did something unexpected. Please contact us if the problem persists.
 
+      else if msg
+        if code
+          h1= code
+        else
+          h1 Error
+        p= msg
+
       else
         h1 404
           h2 (
