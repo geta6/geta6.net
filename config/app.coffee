@@ -43,7 +43,7 @@ app.use express.bodyParser()
 app.use express.methodOverride()
 app.use express.cookieParser()
 app.use express.session
-  secret: 'keyboardcat'
+  secret: (require path.resolve 'config', 'secrets').session
   store: connect.session
 app.use app.get('helper').session
 app.use app.router

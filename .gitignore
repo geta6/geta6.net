@@ -12,6 +12,7 @@ Gemfile.lock
 !**/*.xcodeproj/default.*
 
 .nodectl.json
+config/secrets.json
 
 .AppleDouble
 .AppleDB
