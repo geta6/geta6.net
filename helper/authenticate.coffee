@@ -2,7 +2,7 @@
 
 failureTimeout = 1000
 
-exports.isuser = (username, password, done) ->
+exports.authenticate = (username, password, done) ->
   pycode = """
     from draxoft.auth import pam
     h = pam.handle()

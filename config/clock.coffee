@@ -24,8 +24,6 @@ else
 
   # Worker
 
-  console.log 'start'
-
   app = require path.resolve 'config', 'app'
   {File} = app.get('models')
 
@@ -42,18 +40,17 @@ else
         files.push _.extend name: file, fs.statSync file
         if fs.statSync(file).isDirectory()
           files = files.concat statdirSync file
-    files.push _.extend name:'/media/var', fs.statSync '/media/var'
-
+    files.push _.extend name:process.env.ROOT_DIR, fs.statSync process.env.ROOT_DIR
     return files
 
-  async.map (statdirSync '/media/var'), (stat, next) ->
+  async.map (statdirSync process.env.ROOT_DIR), (stat, next) ->
     File.findByPath stat.name, (err, file) ->
       unless file
         create++
         file = new File
           node: stat.ino
           path: stat.name
-          addr: stat.name.replace /^\/media\/var/, ''
+          addr: stat.name.replace new RegExp("^#{process.env.ROOT_DIR}"), ''
           name: path.basename stat.name
           stat: stat
           size: if stat.isDirectory() then 0 else stat.size

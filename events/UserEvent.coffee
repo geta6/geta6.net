@@ -3,7 +3,7 @@ url = require 'url'
 exports.UserEvent = (app) ->
 
   {User} = app.get 'models'
-  {pubkey, isuser} = app.get 'helper'
+  {authenticate, pubkey} = app.get 'helper'
 
   session:
     verify: (req, res) ->
@@ -14,7 +14,7 @@ exports.UserEvent = (app) ->
       res.setHeader 'Cache-Control', 'no-cache, no-store, must-revalidate'
       return (res.redirect 'back') unless (username = req.body.username)
       return (res.redirect 'back') unless (password = req.body.password)
-      return isuser username, password, (err, success) ->
+      return authenticate username, password, (err, success) ->
         return (res.redirect 'back') if err or !success
         return User.findByName username, (err, user) ->
           user = new User { name: username, mail: '' } unless user

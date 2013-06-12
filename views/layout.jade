@@ -2,7 +2,7 @@
 html
   head
     if info
-      if info.name == 'var'
+      if info.name == _.last(process.env.ROOT_DIR.split('/'))
         - info.name = '/'
         title Getabuntu
       else

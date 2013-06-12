@@ -3,7 +3,7 @@ path = require 'path'
 
 resolve = (filepath) ->
   filepath or= ''
-  return path.join '/media/var', filepath
+  return path.join process.env.ROOT_DIR, filepath
 
 exports.FileEvent = (app) ->
 

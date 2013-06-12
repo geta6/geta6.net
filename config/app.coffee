@@ -1,6 +1,8 @@
 
 # Dependencies
 
+process.env.ROOT_DIR = '/media/var'
+
 path = require 'path'
 cluster = require 'cluster'
 
