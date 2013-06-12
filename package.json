@@ -1,6 +1,6 @@
 {
   "name": "geta6.net",
-  "version": "3.0.0",
+  "version": "3.0.3",
   "port": 3030,
   "private": true,
   "main": "config/app.coffee",
