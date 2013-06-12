@@ -7,6 +7,7 @@ resolve = (filepath) ->
 
 exports.FileEvent = (app) ->
 
+  {User} = app.get 'models'
   {File} = app.get 'models'
 
   browse: (req, res, next) ->
@@ -50,5 +51,10 @@ exports.FileEvent = (app) ->
         if req.query.download
           return res.stream info.path,
             headers: 'Content-Type': 'application/octet-stream'
-        return res.stream info.path
+        return res.stream info.path, (err, ini, end) ->
+          if ini is 0 and end is 1
+            User.findById req.session.user._id, (err, user) ->
+              user.hist or= []
+              user.hist.push info
+              user.save()
       return next()

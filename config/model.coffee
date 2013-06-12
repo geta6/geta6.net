@@ -9,10 +9,13 @@ UserModel = new mongoose.Schema
   name: { type: String, unique: yes, index: yes }
   mail: { type: String }
   keys: { type: mongoose.Schema.Types.Mixed }
+  hist: [{ type: mongoose.Schema.Types.ObjectId, ref: 'files' }]
 
 UserModel.statics.findByName = (username, done) ->
-  @findOne { name: username }, {}, {}, (err, user) ->
-    return done err, user
+  @findOne(name: username)
+    .populate('hist')
+    .exec (err, user) ->
+      return done err, user
 
 exports.User = User = mongoose.model 'users', UserModel
 

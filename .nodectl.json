@@ -1,0 +1,5 @@
+{
+  "execmaster": "config/clock.coffee",
+  "env": "production",
+  "daemon": true
+}

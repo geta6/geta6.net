@@ -16,8 +16,8 @@ block content
             tr.head: th(colspan=2) E-mail address
             tr.browse: td(colspan=2): input(type='text', placeholder='E-mail address')= req.session.user.mail
             tr.head: th(colspan=2) SSH-Keys
-            tr.browse
-              for key in _.pairs(req.session.user.keys)
+            for key in _.pairs(req.session.user.keys)
+              tr.browse
                 td: div <b>#{_.last(key[1].split(' '))}</b> (#{key[0]})
                 td.right: button(disabled).danger Remove
             tr.head: th(colspan=2) Add SSH-Keys

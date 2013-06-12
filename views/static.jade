@@ -28,8 +28,8 @@ block content
           button#cmnt.socket_disabled(onclick='window.g6.cmnt("#{info._id}")', class=cmntActive?'active':'', disabled)
             i.icon.chat
             span= cmnts.length
-          if /pdf/.test(info.mime) && /iPhone/.test(req.headers['user-agent'])
-            a.button(href='ibooks://#{req.host}/stream#{info.addr}'): i.icon.book_open
+          //- if /pdf/.test(info.mime) && /iPhone/.test(req.headers['user-agent'])
+          a.button(href='afp://#{req.host}/media#{info.addr}'): i.icon.imac
           a.button(href='/stream#{info.addr}?download=true'): i.icon.download
       tr.browse
         td(colspan=3)
